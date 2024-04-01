@@ -27,9 +27,9 @@ def psql_to_csv():
     rows = cursor.fetchall()
     col_names = [desc[0] for desc in cursor.description]
     with open("./environment_data.csv", 'w', newline='') as csv_file:
-    csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(col_names)
-    csv_writer.writerows(rows)
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(col_names)
+        csv_writer.writerows(rows)
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -51,12 +51,12 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @app.route('/environmental_data', methods=['POST'])
+    @app.route('/sensor_data', methods=['POST'])
     def receive_sensor_data():
         data = request.get_json()
         temperature = round(data.get('temp'), 2)
         humidity = data.get('humd')
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         insert_sensor_data(temperature, humidity, timestamp)
-        return jsonify({'message': 'Sensor data received and storedsuccessfully.'})
+        return jsonify({'message': 'Sensor data received and stored successfully.'})
     return app

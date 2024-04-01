@@ -1,4 +1,4 @@
--- psql -U your_username -f init.sql
+-- psql -U postgres -f init.sql
 
 CREATE DATABASE environment;
 
@@ -12,4 +12,5 @@ CREATE TABLE data (
     temp FLOAT,
     humd FLOAT,
     ph FLOAT,
+    light BOOLEAN,
 );
