@@ -55,8 +55,8 @@ def create_app(test_config=None):
     def receive_sensor_data():
         data = request.get_json()
         temperature = round(data.get('temp'), 2)
-        humidity = data.get('humd')
-        ph = data.get('ph')
+        humidity = round(data.get('humd'), 2)
+        ph = round(data.get('ph'), 2)
         light = data.get('light')
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(temperature, humidity, timestamp, ph, light)
