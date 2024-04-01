@@ -13,10 +13,10 @@ def get_db_connection():
         port="5432"
     )
 
-def insert_sensor_data(temperature, humidity, timestamp):
+def insert_sensor_data(temperature, humidity, timestamp, ph, light):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO environment_data (temp, humd, timestamp) VALUES (%s, %s, %s)", (temperature, humidity, timestamp))
+    cursor.execute("INSERT INTO environment_data (time, temp, humd, ph, light) VALUES (%s, %s, %s)", (timestamp, temperature, humidity, ph, light))
     conn.commit()
     conn.close()
 
@@ -56,7 +56,9 @@ def create_app(test_config=None):
         data = request.get_json()
         temperature = round(data.get('temp'), 2)
         humidity = data.get('humd')
+        ph = data.get('pH')
+        light = data.get('light')
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        insert_sensor_data(temperature, humidity, timestamp)
+        insert_sensor_data(timestamp, temperature, humidity, ph, light)
         return jsonify({'message': 'Sensor data received and stored successfully.'})
     return app
