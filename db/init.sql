@@ -1,3 +1,5 @@
+-- psql -U your_username -f init.sql
+
 CREATE DATABASE environment;
 
 -- Connect to the new database
