@@ -8,9 +8,9 @@ CREATE DATABASE environment;
 -- Create a table in the new database
 CREATE TABLE data (
     id SERIAL PRIMARY KEY,
-    time TIMESTAMP,
+    time TIMESTAMP DEFAULT NOW(),
     temp FLOAT,
     humd FLOAT,
     ph FLOAT,
-    light BOOLEAN,
+    light BOOLEAN
 );
