@@ -16,14 +16,14 @@ def get_db_connection():
 def insert_sensor_data(temperature, humidity, timestamp, ph, light):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO environment_data (time, temp, humd, ph, light) VALUES (%s, %s, %s)", (timestamp, temperature, humidity, ph, light))
+    cursor.execute("INSERT INTO data (time, temp, humd, ph, light) VALUES (%s, %s, %s, %s, %s)", (timestamp, temperature, humidity, ph, light))
     conn.commit()
     conn.close()
 
 def psql_to_csv():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM environment_data")
+    cursor.execute("SELECT * FROM data")
     rows = cursor.fetchall()
     col_names = [desc[0] for desc in cursor.description]
     with open("./environment_data.csv", 'w', newline='') as csv_file:
@@ -56,9 +56,10 @@ def create_app(test_config=None):
         data = request.get_json()
         temperature = round(data.get('temp'), 2)
         humidity = data.get('humd')
-        ph = data.get('pH')
+        ph = data.get('ph')
         light = data.get('light')
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        insert_sensor_data(timestamp, temperature, humidity, ph, light)
+        print(temperature, humidity, timestamp, ph, light)
+        insert_sensor_data(temperature, humidity, timestamp, ph, light)
         return jsonify({'message': 'Sensor data received and stored successfully.'})
     return app
