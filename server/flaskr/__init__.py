@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import psycopg2
 from datetime import datetime
 import os
@@ -13,12 +14,22 @@ def get_db_connection():
         port="5432"
     )
 
-def insert_sensor_data(temperature, humidity, timestamp, ph, light):
+def insert_sensor_data(conn, temperature, humidity, timestamp, ph, light):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("INSERT INTO data (time, temp, humd, ph, light) VALUES (%s, %s, %s, %s, %s)", (timestamp, temperature, humidity, ph, light))
     conn.commit()
+    cursor.close()
     conn.close()
+    
+def get_sensor_data():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM data ORDER BY time DESC LIMIT 10;")
+    recent = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return recent
 
 def psql_to_csv():
     conn = get_db_connection()
@@ -33,6 +44,7 @@ def psql_to_csv():
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
+    cors = CORS(app, origins='*')
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY="dev",
@@ -62,4 +74,9 @@ def create_app(test_config=None):
         print(temperature, humidity, timestamp, ph, light)
         insert_sensor_data(temperature, humidity, timestamp, ph, light)
         return jsonify({'message': 'Sensor data received and stored successfully.'})
+    
+    @app.route('/api/data', methods=['GET'])
+    def data():
+        return get_sensor_data()
+        
     return app
