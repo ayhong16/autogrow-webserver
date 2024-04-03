@@ -1,27 +1,34 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+
+# from flask_cors import CORS
 import psycopg2
 from datetime import datetime
 import os
 import csv
+
 
 def get_db_connection():
     return psycopg2.connect(
         dbname="environment",
         user="postgres",
         password="password",
-        host="nrgserver",
-        port="5432"
+        host="localhost",
+        port="5432",
     )
+
 
 def insert_sensor_data(temperature, humidity, timestamp, ph, light):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO data (time, temp, humd, ph, light) VALUES (%s, %s, %s, %s, %s)", (timestamp, temperature, humidity, ph, light))
+    cursor.execute(
+        "INSERT INTO data (time, temp, humd, ph, light) VALUES (%s, %s, %s, %s, %s)",
+        (timestamp, temperature, humidity, ph, light),
+    )
     conn.commit()
     cursor.close()
     conn.close()
-    
+
+
 def get_sensor_data():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -31,20 +38,22 @@ def get_sensor_data():
     conn.close()
     return recent
 
+
 def psql_to_csv():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM data")
     rows = cursor.fetchall()
     col_names = [desc[0] for desc in cursor.description]
-    with open("./environment_data.csv", 'w', newline='') as csv_file:
+    with open("./environment_data.csv", "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(col_names)
         csv_writer.writerows(rows)
 
+
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    cors = CORS(app, origins='*')
+    # cors = CORS(app, origins='*')
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY="dev",
@@ -63,20 +72,20 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @app.route('/sensor_data', methods=['POST'])
+    @app.route("/sensor_data", methods=["POST"])
     def receive_sensor_data():
         data = request.get_json()
-        temperature = round(data.get('temp'), 2)
-        humidity = round(data.get('humd'), 2)
-        ph = round(data.get('ph'), 2)
-        light = data.get('light')
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        temperature = round(data.get("temp"), 2)
+        humidity = round(data.get("humd"), 2)
+        ph = round(data.get("ph"), 2)
+        light = data.get("light")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         print(temperature, humidity, timestamp, ph, light)
         insert_sensor_data(temperature, humidity, timestamp, ph, light)
-        return jsonify({'message': 'Sensor data received and stored successfully.'})
-    
-    @app.route('/api/data', methods=['GET'])
+        return jsonify({"message": "Sensor data received and stored successfully."})
+
+    @app.route("/api/data", methods=["GET"])
     def data():
         return get_sensor_data()
-        
+
     return app
