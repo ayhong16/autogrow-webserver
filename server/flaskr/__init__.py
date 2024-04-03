@@ -13,11 +13,12 @@ def get_db_connection():
         user="postgres",
         password="password",
         host="localhost",
-        port="5432",
+        port="5432"
     )
 
 
 def insert_sensor_data(conn, temperature, humidity, timestamp, ph, light):
+def insert_sensor_data(temperature, humidity, timestamp, ph, light):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
