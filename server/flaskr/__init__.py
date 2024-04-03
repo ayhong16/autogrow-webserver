@@ -10,11 +10,11 @@ def get_db_connection():
         dbname="environment",
         user="postgres",
         password="password",
-        host="localhost",
+        host="nrgserver",
         port="5432"
     )
 
-def insert_sensor_data(conn, temperature, humidity, timestamp, ph, light):
+def insert_sensor_data(temperature, humidity, timestamp, ph, light):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("INSERT INTO data (time, temp, humd, ph, light) VALUES (%s, %s, %s, %s, %s)", (timestamp, temperature, humidity, ph, light))
