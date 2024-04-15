@@ -1,20 +1,22 @@
-import { useState, useEffect } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
 import axios from "axios";
+import DataTable from "./components/DataTable.jsx";
 
 function App() {
   const [count, setCount] = useState(0);
-  // const [array, setArray] = useState([]);
+  const [array, setArray] = useState([]);
 
   const fetchAPI = async () => {
-    const response = await axios.get("/api/data");
+    const response = await axios.get("http://localhost:5000/api/data");
+    setArray(response.data);
     console.log(response.data);
   };
 
   useEffect(() => {
-    fetchAPI()
+    fetchAPI();
   }, []);
 
   return (
@@ -32,15 +34,15 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        <div>
+          <DataTable data={array} />
+        </div>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

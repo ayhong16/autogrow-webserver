@@ -27,7 +27,13 @@ def get_sensor_data():
     conn = _get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM data ORDER BY time DESC LIMIT 10;")
-    recent = cursor.fetchall()
+    
+    col_names = [desc[0] for desc in cursor.description]
+    recent = []
+    for row in cursor.fetchall():
+        data_entry = dict(zip(col_names, row))
+        recent.append(data_entry)
+    
     cursor.close()
     conn.close()
     return recent
