@@ -6,7 +6,7 @@ import axios from "axios";
 
 function App() {
   const [count, setCount] = useState(0);
-  const [array, setArray] = useState([]);
+  // const [array, setArray] = useState([]);
 
   const fetchAPI = async () => {
     const response = await axios.get("/api/data");
