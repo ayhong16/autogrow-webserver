@@ -39,12 +39,12 @@ def create_app(test_config=None):
         insert_sensor_data(temperature, humidity, timestamp, ph, light)
         return jsonify({"message": "Sensor data received and stored successfully."})
 
-    @app.route("/api/data", methods=["GET"])
+    @app.route("/api/past_data", methods=["GET"])
     def data():
-        return get_sensor_data()
+        return get_sensor_data(num_records=10)
     
-    @app.route("/")
-    def hello():
-        return "Hello World"
+    @app.route("/api/current_data", methods=["GET"])
+    def recent_data():
+        return get_sensor_data(num_records=1)
 
     return app

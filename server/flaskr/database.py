@@ -23,10 +23,10 @@ def insert_sensor_data(temperature, humidity, timestamp, ph, light):
     conn.close()
 
 
-def get_sensor_data():
+def get_sensor_data(num_records):
     conn = _get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM data ORDER BY time DESC LIMIT 10;")
+    cursor.execute(f"SELECT * FROM data ORDER BY time DESC LIMIT {num_records};")
     
     col_names = [desc[0] for desc in cursor.description]
     recent = []
