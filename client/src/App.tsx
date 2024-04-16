@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import DataTable from "./components/DataTable.tsx";
+import ReadingsWrapper from "./components/currentReadings/ReadingsWrapper.tsx";
 
 function App() {
   const [array, setArray] = useState([]);
@@ -12,12 +12,12 @@ function App() {
   };
 
   useEffect(() => {
-    fetchAPI("past_data");
-    const interval = setInterval(() => fetchAPI("past_data"), 5000); // 5 second sample interval
+    fetchAPI("current_data");
+    const interval = setInterval(() => fetchAPI("current_data"), 5000); // 5 second sample interval
     return () => clearInterval(interval);
   }, []);
 
-  return <DataTable data={array} />;
+  return <ReadingsWrapper />;
 }
 
 export default App;
