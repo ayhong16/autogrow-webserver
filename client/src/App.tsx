@@ -1,9 +1,13 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
 import ReadingsWrapper from "./components/currentReadings/ReadingsWrapper.tsx";
+import Navigation from "./components/Navigation.tsx";
 
 function App() {
-  return <ReadingsWrapper />;
+  return (
+    <>
+      <Navigation />
+      <ReadingsWrapper />
+    </>
+  );
 }
 
 export default App;
