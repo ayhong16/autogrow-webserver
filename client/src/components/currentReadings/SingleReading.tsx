@@ -3,7 +3,7 @@ export default function SingleReading({
   value,
 }: {
   label: string;
-  value: number | string;
+  value: number | string | undefined;
 }) {
   return (
     <div className="flex flex-col items-center gap-2 w-fit text-4xl m-8">

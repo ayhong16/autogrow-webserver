@@ -23,16 +23,32 @@ def insert_sensor_data(temperature, humidity, timestamp, ph, light):
     conn.close()
 
 
-def get_sensor_data(num_records):
+def get_sensor_data(start_time, end_time):
     conn = _get_db_connection()
     cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM data ORDER BY time DESC LIMIT {num_records};")
+    cursor.execute(f"SELECT * FROM data WHERE time >= %s AND time <= %s ORDER BY time DESC;", (start_time, end_time))
     
     col_names = [desc[0] for desc in cursor.description]
     recent = []
     for row in cursor.fetchall():
         data_entry = dict(zip(col_names, row))
         recent.append(data_entry)
+    
+    cursor.close()
+    conn.close()
+    return recent
+
+
+def get_current_sensor_data():
+    conn = _get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM data ORDER BY time DESC LIMIT 1;")
+    
+    col_names = [desc[0] for desc in cursor.description]
+    recent = None
+    for row in cursor.fetchall():
+        data_entry = dict(zip(col_names, row))
+        recent = data_entry
     
     cursor.close()
     conn.close()
