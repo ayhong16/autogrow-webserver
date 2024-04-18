@@ -32,6 +32,10 @@ def create_app(test_config=None):
     with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
 
+    @app.route("/api/reading", methods=["GET"])
+    def current_data():
+        return get_current_sensor_data()
+
     @app.route("/api/reading", methods=["POST"])
     def receive_sensor_data():
         data = request.get_json()
@@ -50,29 +54,25 @@ def create_app(test_config=None):
 
     @app.route("/api/current_data", methods=["GET"])
     def recent_data():
-        return get_sensor_data(num_records=1)
-
-    @app.route("/api/readings/<start>/<end>", methods=["GET"])
-    def data(start, end):
-        try:
-            start_time = iso8601.parse_date(start)
-            if end:
-                end_time = iso8601.parse_date(end)
-            else:
-                end_time = iso8601.parse_date(datetime.now(timezone.utc))
-        except iso8601.ParseError:
-            return (
-                jsonify(
-                    {
-                        "error": "Invalid date format. Use ISO 8601 format: YYYY-MM-DDTHH:MM:SS"
-                    }
-                ),
-            )
-        return get_sensor_data(start_time, end_time)
-
-    @app.route("/api/reading", methods=["GET"])
-    def current_data():
         return get_current_sensor_data()
+
+    # @app.route("/api/readings/<start>/<end>", methods=["GET"])
+    # def data(start, end):
+    #     try:
+    #         start_time = iso8601.parse_date(start)
+    #         if end:
+    #             end_time = iso8601.parse_date(end)
+    #         else:
+    #             end_time = iso8601.parse_date(datetime.now(timezone.utc))
+    #     except iso8601.ParseError:
+    #         return (
+    #             jsonify(
+    #                 {
+    #                     "error": "Invalid date format. Use ISO 8601 format: YYYY-MM-DDTHH:MM:SS"
+    #                 }
+    #             ),
+    #         )
+    #     return get_sensor_data(start_time, end_time)
 
     @sock.route("/api/ws")
     def socket(ws):
