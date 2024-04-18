@@ -9,7 +9,7 @@ import iso8601
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    cors = CORS(app, origins='*')
+    cors = CORS(app, origins="*")
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY="dev",
@@ -49,9 +49,15 @@ def create_app(test_config=None):
             else:
                 end_time = iso8601.parse_date(datetime.now(timezone.utc))
         except iso8601.ParseError:
-            return jsonify({'error': 'Invalid date format. Use ISO 8601 format: YYYY-MM-DDTHH:MM:SS'}),
+            return (
+                jsonify(
+                    {
+                        "error": "Invalid date format. Use ISO 8601 format: YYYY-MM-DDTHH:MM:SS"
+                    }
+                ),
+            )
         return get_sensor_data(start_time, end_time)
-    
+
     @app.route("/api/reading", methods=["GET"])
     def current_data():
         return get_current_sensor_data()
