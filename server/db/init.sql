@@ -16,9 +16,11 @@ CREATE TABLE data (
 );
 
 
-CREATE TABLE schedule (
+CREATE TABLE profiles (
     id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
     start_time TIME,
     end_time TIME,
-    timezone TEXT
+    ph_poll_interval INT,
+    dht_poll_interval INT
 );

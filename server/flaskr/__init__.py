@@ -5,7 +5,7 @@ from flask_sock import Sock
 from flask_cors import CORS
 from datetime import datetime, timezone
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
-from .state_utils import get_state
+from .state_utils import get_state, set_schedule_state, post_state
 import os
 import iso8601
 
@@ -33,17 +33,28 @@ def create_app(test_config=None):
     with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
         
-    # @app.route("/api/set_schedule/<profile>/<start>/<end>", methods=["POST"])
-    # def set_schedule(profile, start, end):
-    #     return set_schedule_state(profile, start, end)
+    @app.route("/api/set_schedule", methods=["POST"])
+    def set_schedule(profile, start, end):
+        """Change the schedule for a given profile.
+
+        Args:
+            profile (string): name of profile to modify
+            start (string): in the format of HH:MM:SS, defines when to turn on the grow light
+            end (string): in the format of HH:MM:SS, defines when to turn off the grow light
+
+        Returns:
+            Error or success message
+        """
+        data = request.get_json()
+        return jsonify(set_schedule_state(data))
         
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
         return get_state()
     
     @app.route("/api/state", methods=["POST"])
-    def post_state():
-        resp = post_sensor_data(request.json)
+    def create_state():
+        resp = post_state(request.get_json())
         return jsonify(resp)
 
     @app.route("/api/reading", methods=["POST"])
@@ -72,13 +83,5 @@ def create_app(test_config=None):
                 ),
             )
         return get_sensor_data(start_time, end_time)
-
-    def is_within_schedule(schedule):
-        if not schedule:
-            return False
-        current_time = datetime.datetime.now().time()
-        start_time = datetime.fromisoformat(schedule["start_time"]).time()
-        end_time = datetime.fromisoformat(schedule["end_time"]).time()
-        return start_time <= current_time <= end_time
 
     return app

@@ -9,9 +9,7 @@ def post_sensor_data(data):
     light = data.get("light")
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     resp = _insert_sensor_data(temperature, humidity, timestamp, ph, light)
-    if resp == {"Error: Could not post sensor data."}:
-        return resp
-    return {"message": "Sensor data received and stored successfully."}
+    return resp
 
 
 def _insert_sensor_data(temperature, humidity, timestamp, ph, light):
@@ -25,6 +23,7 @@ def _insert_sensor_data(temperature, humidity, timestamp, ph, light):
         conn.commit()
         cursor.close()
         conn.close()
+        return {"Message": "Sensor data received and stored successfully."}
     except Exception as e:
         return {"Error: Could not post sensor data."}
 
