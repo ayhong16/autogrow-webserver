@@ -11,14 +11,17 @@ def _interpret_light_state(state):
     Returns:
         bool: whether the grow light should be on or off
     """
-    if not state or not state.get("start_light") or not state.get("end_light"):
+    if not state or not state.get("start_time") or not state.get("end_time"):
         return False
     
-    now = datetime.now().replace(year=1900, month=1, day=1, microsecond=0)
-    start_light = datetime.strptime(state["start_light"], '%Y-%m-%d %H:%M:%S')
-    end_light = datetime.strptime(state["end_light"], '%Y-%m-%d %H:%M:%S')
-
-    if start_light <= now <= end_light:
+    now = datetime.now().replace(microsecond=0).time()
+    start_time = state["start_time"]
+    end_time = state["end_time"]
+    print(now)
+    print(start_time)
+    print(end_time)
+    
+    if start_time <= now <= end_time:
         return True
     else:
         return False
@@ -112,8 +115,8 @@ def get_state():
     light_state = _interpret_light_state(state)
     return {"name": state["name"],
             "light_state": light_state,
-            "phPollInterval": state["phPollInterval"],
-            "dhtPollInterval": state["dhtPollInterval"]}
+            "ph_poll_interval": state["ph_poll_interval"],
+            "dht_poll_interval": state["dht_poll_interval"]}
 
 def post_state(state):
     """Receives a profile state and stores it in the database.

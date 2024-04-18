@@ -47,6 +47,10 @@ def create_app(test_config=None):
         """
         data = request.get_json()
         return jsonify(set_schedule_state(data))
+    
+    @app.route("/api")
+    def server_works():
+        return "Server is up and running."
         
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
