@@ -1,4 +1,6 @@
+import contextlib
 from flask import Flask, request, jsonify
+from flask_sock import Sock
 
 from flask_cors import CORS
 from datetime import datetime, timezone
@@ -6,10 +8,14 @@ from .database import insert_sensor_data, get_sensor_data, get_current_sensor_da
 import os
 import iso8601
 
+light_state = False
+last_light_state = False
+
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    cors = CORS(app, origins="*")
+    # cors = CORS(app, origins="*")
+    sock = Sock(app)
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY="dev",
@@ -23,10 +29,8 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.update(test_config)
     # ensure the instance folder exists
-    try:
+    with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
-    except OSError:
-        pass
 
     @app.route("/api/reading", methods=["POST"])
     def receive_sensor_data():
@@ -39,6 +43,14 @@ def create_app(test_config=None):
         print(temperature, humidity, timestamp, ph, light)
         insert_sensor_data(temperature, humidity, timestamp, ph, light)
         return jsonify({"message": "Sensor data received and stored successfully."})
+
+    @app.route("/api/past_data", methods=["GET"])
+    def data():
+        return get_sensor_data(num_records=10)
+
+    @app.route("/api/current_data", methods=["GET"])
+    def recent_data():
+        return get_sensor_data(num_records=1)
 
     @app.route("/api/readings/<start>/<end>", methods=["GET"])
     def data(start, end):
@@ -61,5 +73,34 @@ def create_app(test_config=None):
     @app.route("/api/reading", methods=["GET"])
     def current_data():
         return get_current_sensor_data()
+
+    @sock.route("/api/ws")
+    def socket(ws):
+        global light_state, last_light_state
+        while True:
+            if light_state != last_light_state:
+                # current_value = is_within_schedule(g.schedule)
+                # print(current_value)
+                # if current_value != g.last_broadcasted_value:
+                #     # Update the last broadcasted value
+                #     g.last_broadcasted_value = current_value
+                #     # Broadcast the new value
+                ws.send(str(light_state))
+                last_light_state = light_state
+
+    def is_within_schedule(schedule):
+        if not schedule:
+            return False
+        current_time = datetime.datetime.now().time()
+        start_time = datetime.fromisoformat(schedule["start_time"]).time()
+        end_time = datetime.fromisoformat(schedule["end_time"]).time()
+        return start_time <= current_time <= end_time
+
+    @app.route("/api/set_schedule", methods=["POST"])
+    def set_schedule():
+        global light_state
+        light_state = not light_state
+        # Broadcast the schedule to all connected WebSocket clients
+        return f"Light set to: {light_state}", 200
 
     return app

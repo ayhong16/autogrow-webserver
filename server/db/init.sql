@@ -14,3 +14,11 @@ CREATE TABLE data (
     ph FLOAT,
     light BOOLEAN
 );
+
+
+CREATE TABLE schedule (
+    id SERIAL PRIMARY KEY,
+    start_time TIME,
+    end_time TIME,
+    timezone TEXT,
+);
