@@ -1,7 +1,5 @@
 import contextlib
 from flask import Flask, request, jsonify
-from flask_sock import Sock
-
 from flask_cors import CORS
 from datetime import datetime, timezone
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
@@ -15,8 +13,7 @@ last_light_state = False
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    cors = CORS(app, origins="*")
-    sock = Sock(app)
+    CORS(app, origins="*")
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY="dev",
@@ -32,7 +29,7 @@ def create_app(test_config=None):
     # ensure the instance folder exists
     with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
-        
+
     @app.route("/api/set_schedule", methods=["POST"])
     def set_schedule(profile, start, end):
         """Change the schedule for a given profile.
@@ -47,11 +44,11 @@ def create_app(test_config=None):
         """
         data = request.get_json()
         return jsonify(set_schedule_state(data))
-        
+
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
         return get_state()
-    
+
     @app.route("/api/state", methods=["POST"])
     def create_state():
         resp = post_state(request.get_json())
