@@ -22,10 +22,7 @@ def _interpret_light_state(state):
     # Check if the start time is later than the end time (e.g., from 5 PM to 5 AM)
     if start_time > end_time:
         # If the current time is before midnight, it's within the interval
-        if now < end_time:
-            return True
-        # If the current time is after midnight, it's also within the interval
-        if now >= start_time:
+        if now < end_time or now >= start_time:
             return True
     elif start_time <= now <= end_time:
         return True
@@ -59,6 +56,34 @@ def _insert_state(name, start_time, end_time, ph_poll_interval, dht_poll_interva
         return {"Message": "Successfully posted profile."}
     except Exception as e:
         return {f"Error {e}": "Could not post profile."}
+    
+    
+def get_schedule(profile):
+    """Returns the current grow light schedule for a specified profile.
+
+    Returns:
+        dict: description of the start and end times for the grow light or error dict
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute(f"SELECT * FROM profiles WHERE name = '{profile}';")
+
+        col_names = [desc[0] for desc in cursor.description]
+        state = None
+        for row in cursor.fetchall():
+            data_entry = dict(zip(col_names, row))
+            state = data_entry
+        return {
+            "start_time": str(state["start_time"]),
+            "end_time": str(state["end_time"]),
+        }
+    except Exception as e:
+        return {f"Error {str(e)}": "Unable to fetch schedule."}
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def set_schedule_state(data):
@@ -73,22 +98,19 @@ def set_schedule_state(data):
     if not data:
         return {"Error": "No JSON data provided"}
 
-    profile = data.get("profile")
+    profile_name = data.get("profile_name")
     start = data.get("start")
     end = data.get("end")
-
-    if not (profile and start and end):
-        return {"Error": "Invalid JSON data provided"}
-
+    
+    if not (profile_name and start and end):
+        return {f"Error": "Invalid JSON data provided"}
+    
     conn = get_db_connection()
     cursor = conn.cursor()
 
     # Update the start_light and end_light properties for the specified profile
     try:
-        cursor.execute(
-            "UPDATE profiles SET start_light = ?, end_light = ? WHERE name = ?;",
-            (start, end, profile),
-        )
+        cursor.execute("UPDATE profiles SET start_time = %s, end_time = %s WHERE name = %s;", (start, end, profile_name))
         conn.commit()
         return {"Message": "Successfully updated schedule."}
     except Exception as e:

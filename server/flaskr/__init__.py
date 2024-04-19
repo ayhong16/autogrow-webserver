@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime, timezone
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
-from .state_utils import get_state, set_schedule_state, post_state
+from .state_utils import get_state, set_schedule_state, post_state, get_schedule
 import os
 import iso8601
 
@@ -29,9 +29,13 @@ def create_app(test_config=None):
     # ensure the instance folder exists
     with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
+        
+    @app.route("/api/schedule/<profile>", methods=["GET"])
+    def fetch_schedule(profile):
+        return get_schedule(profile)
 
     @app.route("/api/set_schedule", methods=["POST"])
-    def set_schedule(profile, start, end):
+    def set_schedule():
         """Change the schedule for a given profile.
 
         Args:
