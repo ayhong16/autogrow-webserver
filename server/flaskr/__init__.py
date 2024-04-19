@@ -1,4 +1,5 @@
 import contextlib
+from crypt import methods
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime, timezone
@@ -44,11 +45,11 @@ def create_app(test_config=None):
         """
         data = request.get_json()
         return jsonify(set_schedule_state(data))
-    
-    @app.route("/api")
+
+    @app.route("/api", methods=["GET", "POST"])
     def server_works():
         return "Server is up and running."
-        
+
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
         return get_state()
