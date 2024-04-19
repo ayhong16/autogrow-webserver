@@ -1,7 +1,6 @@
 import contextlib
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import logging
 from datetime import datetime, timezone
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
 from .state_utils import get_state, set_schedule_state, post_state
@@ -12,8 +11,15 @@ light_state = False
 last_light_state = False
 
 
+class CustomFlask(Flask):
+    def log_request(self, *args, **kwargs):
+        if request.endpoint in ["fetch_state", "server_works"]:
+            return
+        return super().log_request(*args, **kwargs)
+
+
 def create_app(test_config=None):
-    app = Flask(__name__, instance_relative_config=True)
+    app = CustomFlask(__name__, instance_relative_config=True)
     CORS(app, origins="*")
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
@@ -30,10 +36,6 @@ def create_app(test_config=None):
     # ensure the instance folder exists
     with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
-
-    @app.before_request
-    def before_request():
-        app.logger.disabled = request.endpoint == "fetch_state"
 
     @app.route("/api/set_schedule", methods=["POST"])
     def set_schedule(profile, start, end):
