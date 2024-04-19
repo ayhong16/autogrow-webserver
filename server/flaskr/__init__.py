@@ -31,7 +31,7 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
 
     @app.route("/api/set_schedule", methods=["POST"])
-    def set_schedule(profile, start, end):
+    def set_schedule():
         """Change the schedule for a given profile.
 
         Args:
@@ -51,7 +51,7 @@ def create_app(test_config=None):
         
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
-        return get_state()
+        return jsonify(get_state())
 
     @app.route("/api/state", methods=["POST"])
     def create_state():

@@ -17,9 +17,6 @@ def _interpret_light_state(state):
     now = datetime.now().replace(microsecond=0).time()
     start_time = state["start_time"]
     end_time = state["end_time"]
-    print(now)
-    print(start_time)
-    print(end_time)
     
     if start_time <= now <= end_time:
         return True
@@ -67,11 +64,11 @@ def set_schedule_state(data):
     if not data:
         return {f"Error": "No JSON data provided"}
 
-    profile = data.get("profile")
+    profile_name = data.get("profile_name")
     start = data.get("start")
     end = data.get("end")
-
-    if not (profile and start and end):
+    
+    if not (profile_name and start and end):
         return {f"Error": "Invalid JSON data provided"}
     
     conn = get_db_connection()
@@ -79,7 +76,7 @@ def set_schedule_state(data):
     
     # Update the start_light and end_light properties for the specified profile
     try:
-        cursor.execute(f"UPDATE profiles SET start_light = ?, end_light = ? WHERE name = ?;", (start, end, profile_name))
+        cursor.execute(f"UPDATE profiles SET start_time = %s, end_time = %s WHERE name = %s;", (start, end, profile_name))
         conn.commit()
         return {"Message": "Successfully updated schedule."}
     except Exception as e:
