@@ -1,6 +1,7 @@
 import contextlib
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import logging
 from datetime import datetime, timezone
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
 from .state_utils import get_state, set_schedule_state, post_state
@@ -30,6 +31,11 @@ def create_app(test_config=None):
     with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
 
+    @app.before_request
+    def before_request():
+        if request.endpoint == "your_endpoint_name":
+            app.logger.disabled = True
+
     @app.route("/api/set_schedule", methods=["POST"])
     def set_schedule(profile, start, end):
         """Change the schedule for a given profile.
@@ -51,6 +57,9 @@ def create_app(test_config=None):
 
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
+        logging.getLogger("werkzeug").setLevel(
+            logging.ERROR
+        )  # Suppress logging to clear up console
         return get_state()
 
     @app.route("/api/state", methods=["POST"])
