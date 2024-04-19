@@ -100,5 +100,6 @@ def create_app(test_config=None):
     def memory():
         memory = request.get_json()
         print(memory)
+        return jsonify({"success": "Memory received."})
 
     return app
