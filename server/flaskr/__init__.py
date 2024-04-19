@@ -7,7 +7,6 @@ from .state_utils import get_state, set_schedule_state, post_state
 import os
 import iso8601
 
-light_state = False
 last_light_state = False
 
 
@@ -52,6 +51,13 @@ def create_app(test_config=None):
 
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
+        new_state = get_state()
+        if new_state is None:
+            return jsonify({"error": "No state found."})
+        global last_light_state
+        if new_state["light_state"] != last_light_state:
+            last_light_state = new_state["light_state"]
+            print(f"Light state changed to {last_light_state}")
         return get_state()
 
     @app.route("/api/state", methods=["POST"])
