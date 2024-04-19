@@ -1,5 +1,5 @@
 import contextlib
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, current_app
 from flask_cors import CORS
 from datetime import datetime, timezone
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
@@ -11,19 +11,12 @@ light_state = False
 last_light_state = False
 
 
-class CustomFlask(Flask):
-    def log_request(self, *args, **kwargs):
-        if request.endpoint in ["fetch_state", "server_works"]:
-            return
-        return super().log_request(*args, **kwargs)
-
-
 def create_app(test_config=None):
-    app = CustomFlask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True)
     CORS(app, origins="*")
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
-        SECRET_KEY="dev",
+        SECRET_KEY="dev" if current_app["DEBUG"] else os.urandom(16),
         # store the database in the instance folder
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
     )
