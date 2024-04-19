@@ -1,5 +1,5 @@
 import contextlib
-from flask import Flask, request, jsonify, current_app
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime, timezone
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
@@ -14,9 +14,10 @@ last_light_state = False
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     CORS(app, origins="*")
+    debug_value = app.config.get("DEBUG", False)
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
-        SECRET_KEY="dev" if current_app["DEBUG"] else os.urandom(16),
+        SECRET_KEY="dev" if debug_value else os.urandom(16),
         # store the database in the instance folder
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
     )
