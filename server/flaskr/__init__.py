@@ -33,8 +33,7 @@ def create_app(test_config=None):
 
     @app.before_request
     def before_request():
-        if request.endpoint == "your_endpoint_name":
-            app.logger.disabled = True
+        app.logger.disabled = request.endpoint == "fetch_state"
 
     @app.route("/api/set_schedule", methods=["POST"])
     def set_schedule(profile, start, end):
@@ -57,9 +56,6 @@ def create_app(test_config=None):
 
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
-        logging.getLogger("werkzeug").setLevel(
-            logging.ERROR
-        )  # Suppress logging to clear up console
         return get_state()
 
     @app.route("/api/state", methods=["POST"])
