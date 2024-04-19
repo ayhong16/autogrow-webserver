@@ -59,14 +59,14 @@ def create_app(test_config=None):
         resp = post_state(request.get_json())
         return jsonify(resp)
 
+    @app.route("/api/current_data", methods=["GET"])
+    def recent_data():
+        return get_current_sensor_data()
+
     @app.route("/api/reading", methods=["POST"])
     def receive_sensor_data():
         resp = post_sensor_data(request.json)
         return jsonify(resp)
-
-    @app.route("/api/current_data", methods=["GET"])
-    def recent_data():
-        return get_current_sensor_data()
 
     @app.route("/api/past_data/<start>/<end>", methods=["GET"])
     def data(start, end):
