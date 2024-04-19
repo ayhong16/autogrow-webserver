@@ -29,7 +29,7 @@ def create_app(test_config=None):
     # ensure the instance folder exists
     with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
-        
+
     @app.route("/api/schedule/<profile>", methods=["GET"])
     def fetch_schedule(profile):
         return get_schedule(profile)
@@ -99,6 +99,6 @@ def create_app(test_config=None):
     @app.route("/api/memory", methods=["POST"])
     def memory():
         memory = request.get_json()
-        return jsonify({"memory", memory})
+        print(memory)
 
     return app
