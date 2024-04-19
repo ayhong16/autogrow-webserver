@@ -92,4 +92,9 @@ def create_app(test_config=None):
             )
         return get_sensor_data(start_time, end_time)
 
+    @app.route("/api/memory", methods=["POST"])
+    def memory():
+        memory = request.get_json()
+        return jsonify({"memory", memory})
+
     return app
