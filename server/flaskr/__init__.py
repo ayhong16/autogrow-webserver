@@ -7,16 +7,16 @@ from .state_utils import get_state, set_schedule_state, post_state
 import os
 import iso8601
 
-light_state = False
 last_light_state = False
 
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     CORS(app, origins="*")
+    debug_value = app.config.get("DEBUG", False)
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
-        SECRET_KEY="dev",
+        SECRET_KEY="dev" if debug_value else os.urandom(16),
         # store the database in the instance folder
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
     )
@@ -44,28 +44,35 @@ def create_app(test_config=None):
         """
         data = request.get_json()
         return jsonify(set_schedule_state(data))
-    
-    @app.route("/api")
+
+    @app.route("/api", methods=["GET", "POST"])
     def server_works():
         return "Server is up and running."
-        
+
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
-        return jsonify(get_state())
+        new_state = get_state()
+        if new_state is None:
+            return jsonify({"error": "No state found."})
+        global last_light_state
+        if new_state["light_state"] != last_light_state:
+            last_light_state = new_state["light_state"]
+            print(f"Light state changed to {last_light_state}")
+        return get_state()
 
     @app.route("/api/state", methods=["POST"])
     def create_state():
         resp = post_state(request.get_json())
         return jsonify(resp)
 
+    @app.route("/api/current_data", methods=["GET"])
+    def recent_data():
+        return get_current_sensor_data()
+
     @app.route("/api/reading", methods=["POST"])
     def receive_sensor_data():
         resp = post_sensor_data(request.json)
         return jsonify(resp)
-
-    @app.route("/api/current_data", methods=["GET"])
-    def recent_data():
-        return get_current_sensor_data()
 
     @app.route("/api/past_data/<start>/<end>", methods=["GET"])
     def data(start, end):
