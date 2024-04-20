@@ -1,14 +1,14 @@
 import ReadingsWrapper from "./components/currentReadings/ReadingsWrapper.tsx";
 import Navigation from "./components/navigation/Navigation.tsx";
-import SettingsBar from "./components/settingsBar/SettingsBar.tsx";
+import { LocalizationProvider } from "@mui/x-date-pickers"; // Correct import path
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 function App() {
   return (
-    <>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
       <Navigation />
-      <SettingsBar />
       <ReadingsWrapper />
-    </>
+    </LocalizationProvider>
   );
 }
 

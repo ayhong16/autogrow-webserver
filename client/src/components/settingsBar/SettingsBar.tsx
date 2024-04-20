@@ -24,5 +24,5 @@ export default function SettingsBar() {
     return () => clearInterval(interval);
   }, []);
 
-  return <PollingOptions />;
+  return <PollingOptions currentValue={currentProfile?.start_time} />;
 }

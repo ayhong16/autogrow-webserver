@@ -1,5 +1,6 @@
 from .db_connection import get_db_connection
 from datetime import datetime
+import time
 
 
 def _interpret_light_state(state):
@@ -146,8 +147,8 @@ def get_state():
     light_state = _interpret_light_state(state)
     return {
         "name": state["name"],
-        "start_time": state["start_time"],
-        "end_time": state["end_time"],
+        "start_time": state["start_time"].strftime("%H:%M:%S"),
+        "end_time": state["end_time"].strftime("%H:%M:%S"),
         "light_state": light_state,
         "ph_poll_interval": state["ph_poll_interval"],
         "dht_poll_interval": state["dht_poll_interval"],
