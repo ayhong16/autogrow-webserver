@@ -5,9 +5,15 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@preline/dropdown':
+    specifier: ^2.1.0
+    version: 2.1.0
   axios:
     specifier: ^1.6.8
     version: 1.6.8
+  preline:
+    specifier: ^2.1.0
+    version: 2.1.0
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -626,6 +632,14 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@popperjs/core@2.11.8:
+    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+    dev: false
+
+  /@preline/dropdown@2.1.0:
+    resolution: {integrity: sha512-Lp4W0PnF3dM4ysWGsF8WYIK7JU6F4NzyQHMqVYHcgbxXlaKhIzyYtERDBWVQqoDE3j3p6NahHVDoepArd1Y88w==}
+    dev: false
 
   /@rollup/rollup-android-arm-eabi@4.14.3:
     resolution: {integrity: sha512-X9alQ3XM6I9IlSlmC8ddAvMSyG1WuHk5oUnXGw+yUBs3BFoTizmG1La/Gr8fVJvDWAq+zlYTZ9DBgrlKRVY06g==}
@@ -2502,6 +2516,12 @@ packages:
       picocolors: 1.0.0
       source-map-js: 1.2.0
     dev: true
+
+  /preline@2.1.0:
+    resolution: {integrity: sha512-7pwrGNPVfGYUv1XHW9i49ejowIVHCDTx8JvbM43hapLi1GCjj9NnAZmTKupxaROboB4Nvp2x0ADBVKAhpmZppA==}
+    dependencies:
+      '@popperjs/core': 2.11.8
+    dev: false
 
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}

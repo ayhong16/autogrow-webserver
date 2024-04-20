@@ -146,6 +146,8 @@ def get_state():
     light_state = _interpret_light_state(state)
     return {
         "name": state["name"],
+        "start_time": state["start_time"],
+        "end_time": state["end_time"],
         "light_state": light_state,
         "ph_poll_interval": state["ph_poll_interval"],
         "dht_poll_interval": state["dht_poll_interval"],

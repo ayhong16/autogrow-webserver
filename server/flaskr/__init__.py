@@ -62,7 +62,7 @@ def create_app(test_config=None):
         if new_state["light_state"] != last_light_state:
             last_light_state = new_state["light_state"]
             print(f"Light state changed to {last_light_state}")
-        return get_state()
+        return new_state
 
     @app.route("/api/state", methods=["POST"])
     def create_state():
