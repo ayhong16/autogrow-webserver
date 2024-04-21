@@ -6,11 +6,11 @@ interface Props {
   unit?: string;
 }
 
-export default function SingleReading({ label, value, unit }: Props) {
+export default function CurrentReading({ label, value, unit }: Props) {
   return (
     <div className="flex flex-col items-center gap-2 w-fit text-4xl">
-      <h3 className="text-[darkGreen]">{label}</h3>
-      <div className="flex items-center justify-center w-32 h-32 rounded-full bg-[darkGreen]">
+      <h3 className="text-darkGreen">{label}</h3>
+      <div className="flex items-center justify-center w-32 h-32 rounded-full bg-darkGreen">
         {!value ? (
           LoadingSpinner
         ) : (

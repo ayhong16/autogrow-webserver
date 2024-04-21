@@ -1,5 +1,5 @@
 export type DataEntry = {
-  time: number;
+  time: Date;
   temp: number;
   humd: number;
   ph: number;
