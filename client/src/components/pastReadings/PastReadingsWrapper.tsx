@@ -1,4 +1,3 @@
-import LightBackground from "../LightBackground";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { DataEntry } from "../../types/Data";
@@ -26,7 +25,7 @@ export default function PastReadingsWrapper() {
   }, []);
 
   return (
-    <LightBackground>
+    <>
       <ReadingsLineChart
         x={times}
         y={data.map((datapoint) => datapoint.temp)}
@@ -34,6 +33,27 @@ export default function PastReadingsWrapper() {
         xLabel="Dates"
         yLabel="Temperature(°F)"
       />
-    </LightBackground>
+      <ReadingsLineChart
+        x={times}
+        y={data.map((datapoint) => datapoint.humd)}
+        title="Historical Humidity"
+        xLabel="Dates"
+        yLabel="Humidity(%)"
+      />
+      <ReadingsLineChart
+        x={times}
+        y={data.map((datapoint) => datapoint.ph)}
+        title="Historical pH Levels"
+        xLabel="Dates"
+        yLabel="pH"
+      ></ReadingsLineChart>
+      <ReadingsLineChart
+        x={times}
+        y={data.map((datapoint) => (datapoint.light ? 1 : 0))}
+        title="Historical Light Levels"
+        xLabel="Dates"
+        yLabel="Light On/Off"
+      ></ReadingsLineChart>
+    </>
   );
 }

@@ -8,7 +8,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { max } from "moment";
+import LightBackground from "../LightBackground";
 
 interface Props {
   x: Date[];
@@ -99,5 +99,9 @@ export default function ReadingsLineChart({
     ],
   };
 
-  return <Line data={data} options={options} />;
+  return (
+    <LightBackground>
+      <Line data={data} options={options} />;
+    </LightBackground>
+  );
 }
