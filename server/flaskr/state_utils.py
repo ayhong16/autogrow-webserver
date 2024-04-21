@@ -85,7 +85,7 @@ def get_schedule(profile):
         conn.close()
 
 
-def set_schedule_state(data):
+def set_schedule_state(start, end, profile_name):
     """Updates the start and end times for the grow light for a specified profile.
 
     Args:
@@ -94,25 +94,24 @@ def set_schedule_state(data):
     Returns:
         dict: message of success or error
     """
-    if not data:
-        return {"Error": "No JSON data provided"}
-
-    profile_name = data.get("profile_name")
-    start = data.get("start")
-    end = data.get("end")
-
-    if not (profile_name and start and end):
-        return {"Error": "Invalid JSON data provided"}
-
+    if not profile_name:
+        return {f"Error": "No profile selected to update."}
+    if not start and not end:
+        return {f"Error": "No schedule provided."}
+    print("start: ", start)
+    print("end: ", end)
+    print("name: ", profile_name)
+    
     conn = get_db_connection()
     cursor = conn.cursor()
 
     # Update the start_light and end_light properties for the specified profile
     try:
-        cursor.execute(
-            "UPDATE profiles SET start_time = %s, end_time = %s WHERE name = %s;",
-            (start, end, profile_name),
-        )
+        if start:
+            cursor.execute("UPDATE profiles SET start_time = %s WHERE name = %s;", (start, profile_name))
+        if end:
+            cursor.execute("UPDATE profiles SET end_time = %s WHERE name = %s;", (end, profile_name))
+        # cursor.execute("UPDATE profiles SET start_time = %s, end_time = %s WHERE name = %s;", (start, end, profile_name))
         conn.commit()
         return {"Message": "Successfully updated schedule."}
     except Exception as e:
