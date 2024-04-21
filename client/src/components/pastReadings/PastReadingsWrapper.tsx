@@ -28,8 +28,6 @@ export default function PastReadingsWrapper() {
     return () => clearInterval(interval);
   }, []);
 
-  console.log(data);
-
   if (!data || data.length === 0) {
     return <div>Loading...</div>;
   }
