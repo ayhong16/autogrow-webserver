@@ -1,19 +1,18 @@
-version: "3.8"
 services:
-  # web:
-  #   build: ./client/
-  #   ports:
-  #     - "5005:80"
-  #   depends_on:
-  #     - postgres
-  #   environment:
-  #     - APP_API_URL=http://localhost:5000 # Set the API URL
-  # flask:
-  #   build: ./server/
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     - postgres
+  web:
+    build: ./client/
+    ports:
+      - "5005:80"
+    depends_on:
+      - postgres
+    environment:
+      - BACKEND_URL=http://flask:5000 # Set the API URL
+  flask:
+    build: ./server/
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
   postgres:
     image: postgres:16.2-alpine
     volumes:
