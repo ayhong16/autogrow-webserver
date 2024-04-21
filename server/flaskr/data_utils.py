@@ -29,19 +29,16 @@ def _insert_sensor_data(temperature, humidity, timestamp, ph, light):
 
 
 def get_sensor_data(start_time, end_time):
-    if start_time is None:
-        return {"Error": "Start time is missing in the query parameters"}
-    if end_time is None:
-        return {"Error": "End time is missing in the query parameters"}
-    
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-        end_time = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
-        cursor.execute(f"SELECT * FROM data WHERE time >= %s AND time <= %s ORDER BY time DESC;", (start_time, end_time))
-        
+        if start_time is None or end_time is None:
+            cursor.execute("SELECT * FROM data ORDER BY time DESC;")
+        else:
+            start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+            end_time = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+            cursor.execute(f"SELECT * FROM data WHERE time >= %s AND time <= %s ORDER BY time DESC;", (start_time, end_time))
         col_names = [desc[0] for desc in cursor.description]
         data = []
         for row in cursor.fetchall():
