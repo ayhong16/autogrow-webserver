@@ -57,8 +57,8 @@ def _insert_state(name, start_time, end_time, ph_poll_interval, dht_poll_interva
         return {"Message": "Successfully posted profile."}
     except Exception as e:
         return {f"Error {e}": "Could not post profile."}
-    
-    
+
+
 def get_schedule(profile):
     """Returns the current grow light schedule for a specified profile.
 
@@ -67,7 +67,7 @@ def get_schedule(profile):
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     try:
         cursor.execute(f"SELECT * FROM profiles WHERE name = '{profile}';")
 
@@ -102,16 +102,19 @@ def set_schedule_state(data):
     profile_name = data.get("profile_name")
     start = data.get("start")
     end = data.get("end")
-    
+
     if not (profile_name and start and end):
         return {f"Error": "Invalid JSON data provided"}
-    
+
     conn = get_db_connection()
     cursor = conn.cursor()
 
     # Update the start_light and end_light properties for the specified profile
     try:
-        cursor.execute("UPDATE profiles SET start_time = %s, end_time = %s WHERE name = %s;", (start, end, profile_name))
+        cursor.execute(
+            "UPDATE profiles SET start_time = %s, end_time = %s WHERE name = %s;",
+            (start, end, profile_name),
+        )
         conn.commit()
         return {"Message": "Successfully updated schedule."}
     except Exception as e:
@@ -142,7 +145,7 @@ def get_state():
     conn.close()
 
     if not state:
-        return {"Error": "No profiles available"}
+        return None
 
     light_state = _interpret_light_state(state)
     return {
