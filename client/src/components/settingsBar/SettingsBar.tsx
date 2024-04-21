@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { ProfileEntry } from "../../types/Profile";
-import PollingOptions from "./PollingOptions";
+import TimePicker from "./TimePicker";
+import { query } from "../utils";
 
 export default function SettingsBar() {
   const [currentProfile, setCurrentProfile] = useState(
@@ -10,13 +11,15 @@ export default function SettingsBar() {
 
   useEffect(() => {
     const getCurrentProfile = async () => {
-      try {
-        const response = await axios.get("/api/state");
-        console.log(response.data);
-        setCurrentProfile(response.data as ProfileEntry);
-      } catch (error) {
-        console.error(`error: ${error}`);
-      }
+      query<ProfileEntry>("/api/state")
+        .then((response) => {
+          if (response.data) {
+            setCurrentProfile(response.data as ProfileEntry)
+          }
+        })
+        .catch((error) => {
+          console.error(`error: ${error}`);
+        });
     };
 
     getCurrentProfile();
@@ -24,5 +27,5 @@ export default function SettingsBar() {
     return () => clearInterval(interval);
   }, []);
 
-  return <PollingOptions currentValue={currentProfile?.start_time} />;
+  return <TimePicker currentValue={currentProfile?.start_time} label="Start" />;
 }
