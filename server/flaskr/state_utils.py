@@ -1,6 +1,5 @@
 from .db_connection import get_db_connection
 from datetime import datetime
-import time
 
 
 def _interpret_light_state(state):
@@ -19,7 +18,6 @@ def _interpret_light_state(state):
     now = datetime.now().replace(microsecond=0).time()
     start_time = state["start_time"]
     end_time = state["end_time"]
-
     # Check if the start time is later than the end time (e.g., from 5 PM to 5 AM)
     if start_time > end_time:
         # If the current time is before midnight, it's within the interval
@@ -57,8 +55,8 @@ def _insert_state(name, start_time, end_time, ph_poll_interval, dht_poll_interva
         return {"Message": "Successfully posted profile."}
     except Exception as e:
         return {f"Error {e}": "Could not post profile."}
-    
-    
+
+
 def get_schedule(profile):
     """Returns the current grow light schedule for a specified profile.
 
@@ -67,7 +65,7 @@ def get_schedule(profile):
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     try:
         cursor.execute(f"SELECT * FROM profiles WHERE name = '{profile}';")
 
@@ -144,7 +142,7 @@ def get_state():
     conn.close()
 
     if not state:
-        return {"Error": "No profiles available"}
+        return None
 
     light_state = _interpret_light_state(state)
     return {

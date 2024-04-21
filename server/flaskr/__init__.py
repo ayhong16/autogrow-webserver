@@ -1,18 +1,14 @@
 import contextlib
 from flask import Flask, request, jsonify
-from flask_cors import CORS
-from datetime import datetime
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
 from .state_utils import get_state, set_schedule_state, post_state, get_schedule
 import os
-import iso8601
 
 last_light_state = False
 
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    CORS(app, origins="*")
     debug_value = app.config.get("DEBUG", False)
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
@@ -30,9 +26,20 @@ def create_app(test_config=None):
     with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
 
+    @app.after_request
+    def after_request(response):
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add(
+            "Access-Control-Allow-Headers", "Content-Type,Authorization"
+        )
+        response.headers.add(
+            "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
+        )
+        return response
+
     @app.route("/api/schedule/", methods=["GET"])
     def fetch_schedule():
-        profile = request.args.get('profile')
+        profile = request.args.get("profile")
         if profile is None:
             return {"Error": "Profile name is missing in the query parameters"}, 400
         return jsonify(get_schedule(profile))

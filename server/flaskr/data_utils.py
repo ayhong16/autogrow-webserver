@@ -1,6 +1,6 @@
 from datetime import datetime
 from .db_connection import get_db_connection
-    
+
 
 def post_sensor_data(data):
     temperature = round(data.get("temp"), 2)
@@ -8,8 +8,7 @@ def post_sensor_data(data):
     ph = round(data.get("ph"), 2)
     light = data.get("light")
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    resp = _insert_sensor_data(temperature, humidity, timestamp, ph, light)
-    return resp
+    return _insert_sensor_data(temperature, humidity, timestamp, ph, light)
 
 
 def _insert_sensor_data(temperature, humidity, timestamp, ph, light):
@@ -31,14 +30,17 @@ def _insert_sensor_data(temperature, humidity, timestamp, ph, light):
 def get_sensor_data(start_time, end_time):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     try:
         if start_time is None or end_time is None:
             cursor.execute("SELECT * FROM data ORDER BY time DESC;")
         else:
             start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
             end_time = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
-            cursor.execute(f"SELECT * FROM data WHERE time >= %s AND time <= %s ORDER BY time DESC;", (start_time, end_time))
+            cursor.execute(
+                "SELECT * FROM data WHERE time >= %s AND time <= %s ORDER BY time DESC;",
+                (start_time, end_time),
+            )
         col_names = [desc[0] for desc in cursor.description]
         data = []
         for row in cursor.fetchall():
@@ -59,17 +61,14 @@ def get_current_sensor_data():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM data ORDER BY time DESC LIMIT 1;")
-    
+
     col_names = [desc[0] for desc in cursor.description]
     recent = None
     for row in cursor.fetchall():
         data_entry = dict(zip(col_names, row))
         recent = data_entry
-    
+
     cursor.close()
     conn.close()
-    
-    if not recent:
-        return {"Error: No data available"}
 
-    return recent
+    return {"Error": "No data available"} if not recent else recent

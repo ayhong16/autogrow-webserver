@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ProfileEntry } from "../../types/Profile";
 import TimePicker from "./TimePicker";
-import { getQuery, postQuery } from "../utils";
+import axios from "axios";
 
 export default function SettingsBar() {
   const [currentProfile, setCurrentProfile] = useState(
@@ -16,15 +16,13 @@ export default function SettingsBar() {
 
   useEffect(() => {
     const getCurrentProfile = async () => {
-      getQuery<ProfileEntry>("/api/state")
-        .then((response) => {
-          if (response.data) {
-            setCurrentProfile(response.data as ProfileEntry);
-          }
-        })
-        .catch((error) => {
-          console.error(`error: ${error}`);
-        });
+      const getData = async () => {
+        const response = await axios.get("/api/state");
+        if (response.data) {
+          setCurrentProfile(response.data as ProfileEntry);
+        }
+      };
+      getData();
     };
 
     getCurrentProfile();
@@ -38,13 +36,11 @@ export default function SettingsBar() {
       end: endTime,
       profile_name: currentProfile?.name || "",
     };
-    postQuery<ProfileEntry>("/api/set_schedule", params)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error(`error: ${error}`);
-      });
+    const postData = async (params: any) => {
+      const response = await axios.post("/api/set_schedule", params);
+      console.log(response.data);
+    };
+    postData(params);
   };
 
   const handleStartTimeChange = (newStartTime: string) => {
@@ -53,7 +49,7 @@ export default function SettingsBar() {
 
   const handleEndTimeChange = (newEndTime: string) => {
     setEndTime(newEndTime);
-  }
+  };
 
   return (
     <div className="flex flex-col w-fit items-center border-2 border-darkGreen m-2 rounded-xl">
