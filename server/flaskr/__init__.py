@@ -1,7 +1,7 @@
 import contextlib
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from datetime import datetime, timezone
+from datetime import datetime
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
 from .state_utils import get_state, set_schedule_state, post_state, get_schedule
 import os
@@ -30,9 +30,12 @@ def create_app(test_config=None):
     with contextlib.suppress(OSError):
         os.makedirs(app.instance_path)
 
-    @app.route("/api/schedule/<profile>", methods=["GET"])
-    def fetch_schedule(profile):
-        return get_schedule(profile)
+    @app.route("/api/schedule/", methods=["GET"])
+    def fetch_schedule():
+        profile = request.args.get('profile')
+        if profile is None:
+            return {"Error": "Profile name is missing in the query parameters"}, 400
+        return jsonify(get_schedule(profile))
 
     @app.route("/api/set_schedule", methods=["POST"])
     def set_schedule():
@@ -62,7 +65,7 @@ def create_app(test_config=None):
         if new_state["light_state"] != last_light_state:
             last_light_state = new_state["light_state"]
             print(f"Light state changed to {last_light_state}")
-        return new_state
+        return jsonify(new_state)
 
     @app.route("/api/state", methods=["POST"])
     def create_state():
@@ -71,30 +74,18 @@ def create_app(test_config=None):
 
     @app.route("/api/current_data", methods=["GET"])
     def recent_data():
-        return get_current_sensor_data()
+        return jsonify(get_current_sensor_data())
 
     @app.route("/api/reading", methods=["POST"])
     def receive_sensor_data():
         resp = post_sensor_data(request.json)
         return jsonify(resp)
 
-    @app.route("/api/past_data/<start>/<end>", methods=["GET"])
-    def data(start, end):
-        try:
-            start_time = iso8601.parse_date(start)
-            if end:
-                end_time = iso8601.parse_date(end)
-            else:
-                end_time = iso8601.parse_date(datetime.now(timezone.utc))
-        except iso8601.ParseError:
-            return (
-                jsonify(
-                    {
-                        "error": "Invalid date format. Use ISO 8601 format: YYYY-MM-DDTHH:MM:SS"
-                    }
-                ),
-            )
-        return get_sensor_data(start_time, end_time)
+    @app.route("/api/past_data", methods=["GET"])
+    def data():
+        start = request.args.get("start")
+        end = request.args.get("end")
+        return jsonify(get_sensor_data(start, end))
 
     @app.route("/api/memory", methods=["POST"])
     def memory():
