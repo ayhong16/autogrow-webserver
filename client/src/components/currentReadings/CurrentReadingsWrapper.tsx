@@ -2,19 +2,19 @@ import { useState, useEffect } from "react";
 import { DataEntry } from "../../types/Data";
 import CurrentReading from "./SingleReading";
 import LightBackground from "../LightBackground";
-import { query } from "../utils";
+import { getQuery } from "../utils";
 
 export default function CurrentReadingsWrapper() {
   const [currentReading, setCurrentReading] = useState(
     null as DataEntry | null
   );
   useEffect(() => {
-    query<DataEntry>("/api/current_data").then((response) => {
+    getQuery<DataEntry>("/api/current_data").then((response) => {
       setCurrentReading(response.data);
     });
     const interval = setInterval(
       () =>
-        query<DataEntry>("/api/current_data").then((response) => {
+        getQuery<DataEntry>("/api/current_data").then((response) => {
           setCurrentReading(response.data);
         }),
       5000

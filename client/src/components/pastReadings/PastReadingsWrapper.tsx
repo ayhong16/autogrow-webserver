@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { DataEntry } from "../../types/Data";
 import ReadingsLineChart from "./ReadingsLineChart";
-import { query } from "../utils";
+import { getQuery } from "../utils";
 
 export default function PastReadingsWrapper() {
   const [data, setData] = useState([] as DataEntry[]);
@@ -9,7 +9,7 @@ export default function PastReadingsWrapper() {
 
   useEffect(() => {
     const getPastReadings = async () => {
-      query<DataEntry[]>("/api/past_data")
+      getQuery<DataEntry[]>("/api/past_data")
         .then((response) => {
           if (response.data && response.data.length !== 0) {
             setTimes(

@@ -1,20 +1,25 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { ProfileEntry } from "../../types/Profile";
 import TimePicker from "./TimePicker";
-import { query } from "../utils";
+import { getQuery, postQuery } from "../utils";
 
 export default function SettingsBar() {
   const [currentProfile, setCurrentProfile] = useState(
     null as ProfileEntry | null
   );
+  const [startTime, setStartTime] = useState(
+    currentProfile?.start_time || "00:00:00"
+  );
+  const [endTime, setEndTime] = useState(
+    currentProfile?.end_time || "00:00:00"
+  );
 
   useEffect(() => {
     const getCurrentProfile = async () => {
-      query<ProfileEntry>("/api/state")
+      getQuery<ProfileEntry>("/api/state")
         .then((response) => {
           if (response.data) {
-            setCurrentProfile(response.data as ProfileEntry)
+            setCurrentProfile(response.data as ProfileEntry);
           }
         })
         .catch((error) => {
@@ -27,5 +32,48 @@ export default function SettingsBar() {
     return () => clearInterval(interval);
   }, []);
 
-  return <TimePicker currentValue={currentProfile?.start_time} label="Start" />;
+  const handleApplyButtonClick = () => {
+    const params: Record<string, string> = {
+      start: startTime,
+      end: endTime,
+      profile_name: currentProfile?.name || "",
+    };
+    postQuery<ProfileEntry>("/api/set_schedule", params)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(`error: ${error}`);
+      });
+  };
+
+  const handleStartTimeChange = (newStartTime: string) => {
+    setStartTime(newStartTime);
+  };
+
+  const handleEndTimeChange = (newEndTime: string) => {
+    setEndTime(newEndTime);
+  }
+
+  return (
+    <div className="flex flex-col w-fit items-center border-2 border-darkGreen m-2 rounded-xl">
+      <h1 className="text-darkGreen text-2xl m-2">Grow Light Schedule</h1>
+      <TimePicker
+        currentValue={currentProfile?.start_time}
+        label="Start:"
+        onTimeChange={handleStartTimeChange}
+      />
+      <TimePicker
+        currentValue={currentProfile?.end_time}
+        label="End:"
+        onTimeChange={handleEndTimeChange}
+      />
+      <button
+        className="bg-darkGreen text-white text-sm p-1 m-1 rounded-md self-end"
+        onClick={handleApplyButtonClick}
+      >
+        Apply
+      </button>
+    </div>
+  );
 }

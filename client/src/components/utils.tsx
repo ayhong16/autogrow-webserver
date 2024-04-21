@@ -29,10 +29,19 @@ export const LoadingSpinner = (
   </div>
 );
 
-export const query = async <T extends {}>(
+export const getQuery = async <T extends {}>(
   path: string
 ): Promise<AxiosResponse<T>> => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const response = axios.get(apiUrl + path);
+  return response;
+};
+
+export const postQuery = async <T extends {}>(
+  path: string,
+  queryParams: Record<string, string>
+): Promise<AxiosResponse<T>> => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const response = await axios.post(apiUrl + path, {}, { params: queryParams });
   return response;
 };

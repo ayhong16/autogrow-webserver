@@ -3,9 +3,14 @@ import { useState, useEffect } from "react";
 interface Props {
   currentValue?: string;
   label: string;
+  onTimeChange: (newTime: string) => void;
 }
 
-export default function TimePicker({ currentValue, label }: Props) {
+export default function TimePicker({
+  currentValue,
+  label,
+  onTimeChange,
+}: Props) {
   const [hour, setHour] = useState<string>("");
   const [minute, setMinute] = useState<string>("");
   const [second, setSecond] = useState<string>("");
@@ -23,6 +28,7 @@ export default function TimePicker({ currentValue, label }: Props) {
       ampmValue = "PM";
       if (formattedHours > 12) {
         formattedHours -= 12;
+        setHour(formattedHours.toString());
       }
     } else {
       ampmValue = "AM";
@@ -37,20 +43,37 @@ export default function TimePicker({ currentValue, label }: Props) {
     if (currentValue) {
       splitTime(currentValue);
     }
-  });
+  }, [currentValue]);
+
+  const revertTo24Hour = (hour: string) => {
+    if (ampm === "AM") {
+      return hour === "12" ? "00" : hour;
+    } else {
+      return hour === "12" ? hour : (parseInt(hour) + 12).toString();
+    }
+  };
+
+  const handleTimeChange = () => {
+    const newHour = revertTo24Hour(hour);
+    const newMinute = minute.padStart(2, "0");
+    const newSecond = second.padStart(2, "0");
+    const newTime = `${newHour}:${newMinute}:${newSecond}`;
+    onTimeChange(newTime);
+  };
 
   return (
     <div className="flex flex-row items-center text-sm m-1">
-      <h1 className="text-m text-darkGreen">{label}:</h1>
+      <h1 className="text-m text-darkGreen">{label}</h1>
       <div className="flex flex-col items-center m-1">
-        <label htmlFor="hourDropdown" className="text-darkGreen">
-          Hour
-        </label>
+        <h1 className="text-darkGreen">Hour</h1>
         <select
           id="hourDropdown"
           className="preline-dropdow text-darkGreen"
           value={hour}
-          onChange={(e) => setHour(e.target.value)}
+          onChange={(e) => {
+            setHour(() => e.target.value);
+            handleTimeChange();
+          }}
         >
           {[...Array(12).keys()].map((i) => (
             <option key={i + 1} value={(i + 1).toString()}>
@@ -61,14 +84,15 @@ export default function TimePicker({ currentValue, label }: Props) {
       </div>
 
       <div className="flex flex-col items-center m-1">
-        <label htmlFor="minuteDropdown" className="text-darkGreen">
-          Minute
-        </label>
+        <h1 className="text-darkGreen">Minute</h1>
         <select
           id="minuteDropdown"
           className="preline-dropdow text-darkGreen"
           value={minute}
-          onChange={(e) => setMinute(e.target.value)}
+          onChange={(e) => {
+            setMinute(e.target.value);
+            handleTimeChange();
+          }}
         >
           {[...Array(12).keys()].map((i) => (
             <option key={i * 5} value={(i * 5).toString()}>
@@ -79,14 +103,15 @@ export default function TimePicker({ currentValue, label }: Props) {
       </div>
 
       <div className="flex flex-col items-center m-1">
-        <label htmlFor="secondDropdown" className="text-darkGreen">
-          Second
-        </label>
+        <h1 className="text-darkGreen">Second</h1>
         <select
           id="secondDropdown"
           className="preline-dropdow text-darkGreen"
           value={second}
-          onChange={(e) => setSecond(e.target.value)}
+          onChange={(e) => {
+            setSecond(e.target.value);
+            handleTimeChange();
+          }}
         >
           {[...Array(6).keys()].map((i) => (
             <option key={i * 10} value={(i * 10).toString()}>
@@ -97,14 +122,15 @@ export default function TimePicker({ currentValue, label }: Props) {
       </div>
 
       <div className="flex flex-col items-center m-1">
-        <label htmlFor="ampmDropdown" className="text-darkGreen">
-          AM/PM
-        </label>
+        <h1 className="text-darkGreen">AM/PM</h1>
         <select
           id="secondDropdown"
           className="preline-dropdow text-darkGreen"
           value={ampm}
-          onChange={(e) => setAmpm(e.target.value)}
+          onChange={(e) => {
+            setAmpm(e.target.value);
+            handleTimeChange();
+          }}
         >
           <option value="AM">AM</option>
           <option value="PM">PM</option>
