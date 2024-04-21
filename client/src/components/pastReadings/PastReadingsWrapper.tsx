@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { DataEntry } from "../../types/Data";
 import ReadingsLineChart from "./ReadingsLineChart";
