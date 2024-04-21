@@ -99,6 +99,8 @@ export default function ReadingsLineChart({
     ],
   };
 
+  
+
   return (
     <LightBackground>
       <Line data={data} options={options} />;

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { DataEntry } from "../../types/Data";
 import ReadingsLineChart from "./ReadingsLineChart";
+import { query } from "../utils";
 
 export default function PastReadingsWrapper() {
   const [data, setData] = useState([] as DataEntry[]);
@@ -9,20 +10,30 @@ export default function PastReadingsWrapper() {
 
   useEffect(() => {
     const getPastReadings = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/past_data");
-        console.log(response.data);
-        setData(response.data as DataEntry[]);
-        setTimes(response.data.map((datapoint: DataEntry) => datapoint.time));
-      } catch (error) {
-        console.error(`error: ${error}`);
-      }
+      query<DataEntry[]>("/api/past_data")
+        .then((response) => {
+          if (response.data && response.data.length !== 0) {
+            setTimes(
+              response.data.map((datapoint: DataEntry) => datapoint.time)
+            );
+            setData(response.data as DataEntry[]);
+          }
+        })
+        .catch((error) => {
+          console.error(`error: ${error}`);
+        });
     };
 
+    let interval = setInterval(getPastReadings, 5000); // 5 second sample interval
     getPastReadings();
-    const interval = setInterval(getPastReadings, 5000); // 5 second sample interval
     return () => clearInterval(interval);
   }, []);
+
+  console.log(data);
+
+  if (!data || data.length === 0) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

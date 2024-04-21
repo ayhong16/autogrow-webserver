@@ -1,3 +1,6 @@
+import axios, { AxiosResponse } from "axios";
+import { DataEntry } from "../types/Data";
+
 export const LoadingSpinner = (
   <div className="grid min-h-[140px] w-full place-items-center overflow-x-scroll rounded-lg p-6 lg:overflow-visible">
     <svg
@@ -27,3 +30,10 @@ export const LoadingSpinner = (
   </div>
 );
 
+export const query = async <T extends {}>(
+  path: string
+): Promise<AxiosResponse<T>> => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const response = axios.get(apiUrl + path);
+  return response;
+};

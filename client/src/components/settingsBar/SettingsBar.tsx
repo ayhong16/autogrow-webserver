@@ -11,7 +11,7 @@ export default function SettingsBar() {
   useEffect(() => {
     const getCurrentProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/state");
+        const response = await axios.get("/api/state");
         console.log(response.data);
         setCurrentProfile(response.data as ProfileEntry);
       } catch (error) {

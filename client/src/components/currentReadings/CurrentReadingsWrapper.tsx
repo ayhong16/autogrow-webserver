@@ -1,28 +1,24 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { DataEntry } from "../../types/Data";
 import CurrentReading from "./SingleReading";
 import LightBackground from "../LightBackground";
+import { query } from "../utils";
 
 export default function CurrentReadingsWrapper() {
   const [currentReading, setCurrentReading] = useState(
     null as DataEntry | null
   );
-
   useEffect(() => {
-    const getCurrentReading = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/current_data"
-        );
-        setCurrentReading(response.data as DataEntry);
-      } catch (error) {
-        console.error(`error: ${error}`);
-      }
-    };
-
-    getCurrentReading();
-    const interval = setInterval(getCurrentReading, 5000); // 5 second sample interval
+    query<DataEntry>("/api/current_data").then((response) => {
+      setCurrentReading(response.data);
+    });
+    const interval = setInterval(
+      () =>
+        query<DataEntry>("/api/current_data").then((response) => {
+          setCurrentReading(response.data);
+        }),
+      5000
+    ); // 5 second sample interval
     return () => clearInterval(interval);
   }, []);
 
