@@ -71,4 +71,6 @@ def get_current_sensor_data():
     cursor.close()
     conn.close()
 
-    return {"Error: No data available"} if not recent else recent
+    print("data", recent)
+
+    return {"Error": "No data available"} if not recent else recent
