@@ -2,21 +2,20 @@ import { useState, useEffect } from "react";
 import { DataEntry } from "../../types/Data";
 import CurrentReading from "./SingleReading";
 import LightBackground from "../LightBackground";
-import { query } from "../utils";
+import axios from "axios";
 
 export default function CurrentReadingsWrapper() {
   const [currentReading, setCurrentReading] = useState(
     null as DataEntry | null
   );
   useEffect(() => {
-    query<DataEntry>("/api/current_data").then((response) => {
+    const getData = async () => {
+      const response = await axios.get("/api/current_data")
       setCurrentReading(response.data);
-    });
+    };
+    getData();
     const interval = setInterval(
-      () =>
-        query<DataEntry>("/api/current_data").then((response) => {
-          setCurrentReading(response.data);
-        }),
+      getData,
       5000
     ); // 5 second sample interval
     return () => clearInterval(interval);

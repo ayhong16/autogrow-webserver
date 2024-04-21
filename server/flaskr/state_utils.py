@@ -1,6 +1,5 @@
 from .db_connection import get_db_connection
 from datetime import datetime
-import time
 
 
 def _interpret_light_state(state):
@@ -19,7 +18,6 @@ def _interpret_light_state(state):
     now = datetime.now().replace(microsecond=0).time()
     start_time = state["start_time"]
     end_time = state["end_time"]
-
     # Check if the start time is later than the end time (e.g., from 5 PM to 5 AM)
     if start_time > end_time:
         # If the current time is before midnight, it's within the interval
@@ -104,7 +102,7 @@ def set_schedule_state(data):
     end = data.get("end")
 
     if not (profile_name and start and end):
-        return {f"Error": "Invalid JSON data provided"}
+        return {"Error": "Invalid JSON data provided"}
 
     conn = get_db_connection()
     cursor = conn.cursor()
