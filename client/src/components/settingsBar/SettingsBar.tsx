@@ -63,7 +63,7 @@ export default function SettingsBar() {
       </h2>
       <div className="flex flex-col items-center gap-4 w-full">
         <h3 className="text-darkGreen text-2xl m-2">Grow Light Schedule</h3>
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-5 grid-rows-2 gap-2 justify-center items-center">
           <TimePicker
             currentTime={
               currentProfile === null
