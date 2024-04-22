@@ -58,7 +58,6 @@ def create_app(test_config=None):
 
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
-        id = request.args.get("id")
         new_state = get_state()
         if new_state is None:
             return jsonify({"error": "No state found."})

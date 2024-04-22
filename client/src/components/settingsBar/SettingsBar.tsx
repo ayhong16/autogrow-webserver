@@ -30,11 +30,11 @@ export default function SettingsBar() {
     const queryParams = {
       start: currentProfile?.start_time,
       end: currentProfile?.end_time,
-      name: currentProfile?.name || "",
+      id: currentProfile?.id || 1,
     };
     console.log("queryParams", queryParams);
     const postData = async () => {
-      const response = await axios.post("/api/set_schedule", null, {
+      const response = await axios.post("/api/update_settings", null, {
         params: queryParams,
       });
       console.log(response.data);
