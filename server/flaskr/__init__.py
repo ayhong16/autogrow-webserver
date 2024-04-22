@@ -1,7 +1,7 @@
 import contextlib
 from flask import Flask, request, jsonify
 from .data_utils import post_sensor_data, get_sensor_data, get_current_sensor_data
-from .state_utils import get_state, set_schedule_state, post_state, get_schedule
+from .state_utils import get_state, post_state, change_settings
 import os
 
 last_light_state = False
@@ -36,30 +36,21 @@ def create_app(test_config=None):
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
         )
         return response
-
-    @app.route("/api/schedule/", methods=["GET"])
-    def fetch_schedule():
-        profile = request.args.get("profile")
-        if profile is None:
-            return {"Error": "Profile name is missing in the query parameters"}, 400
-        return jsonify(get_schedule(profile))
-
-    @app.route("/api/set_schedule", methods=["POST"])
-    def set_schedule():
-        """Change the schedule for a given profile.
-
-        Args:
-            profile (string): name of profile to modify
-            start (string): in the format of HH:MM:SS, defines when to turn on the grow light
-            end (string): in the format of HH:MM:SS, defines when to turn off the grow light
-
-        Returns:
-            Error or success message
-        """
+    
+    @app.route("/api/update_settings", methods=["POST"])
+    def update_settings():
+        min_ph = request.args.get("min_ph")
+        max_ph = request.args.get("max_ph")
+        min_temp = request.args.get("min_temp")
+        max_temp = request.args.get("max_temp")
+        min_humd = request.args.get("min_humd")
+        max_humd = request.args.get("max_humd")
         start = request.args.get("start")
         end = request.args.get("end")
-        profile_name = request.args.get("name")
-        return jsonify(set_schedule_state(start, end, profile_name))
+        dht_poll = request.args.get("dht_poll_interval")
+        ph_poll = request.args.get("ph_poll_interval")
+        id = request.args.get("id")
+        return jsonify(change_settings(id, start, end, dht_poll, ph_poll, min_ph, max_ph, min_temp, max_temp, min_humd, max_humd))
 
     @app.route("/api", methods=["GET", "POST"])
     def server_works():
@@ -67,6 +58,7 @@ def create_app(test_config=None):
 
     @app.route("/api/state", methods=["GET"])
     def fetch_state():
+        id = request.args.get("id")
         new_state = get_state()
         if new_state is None:
             return jsonify({"error": "No state found."})
