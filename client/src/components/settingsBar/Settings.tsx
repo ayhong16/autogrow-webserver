@@ -79,7 +79,7 @@ export default function SettingsBar() {
 			<h2 className="text-4xl font-medium text-center text-darkGreen">
 				Settings
 			</h2>
-			<div className="flex flex-row w-full items-center justify-center gap-5 my-3">
+			<div className="flex flex-row w-full items-center justify-center gap-2 my-3">
 				<SchedulePicker
 					currentProfile={currentProfile}
 					setCurrentProfile={setCurrentProfile}
