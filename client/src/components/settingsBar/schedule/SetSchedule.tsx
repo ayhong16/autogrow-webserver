@@ -1,11 +1,7 @@
 import moment from "moment";
 import TimePicker from "./TimePicker";
-import { ProfileEntry } from "../../../types/Profile";
+import { Props } from "../SettingsBar";
 
-interface Props {
-	currentProfile: ProfileEntry | null;
-	setCurrentProfile: React.Dispatch<React.SetStateAction<ProfileEntry | null>>;
-}
 
 export default function SetSchedule({
 	currentProfile,

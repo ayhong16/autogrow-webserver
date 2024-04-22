@@ -154,7 +154,7 @@ def change_settings(id, start_time, end_time, dht_poll_interval, ph_poll_interva
             "ph_poll_interval": ph_poll_interval
         }
         for key, value in var_map.items():
-            if value:
+            if value and value != "null":
                 cursor.execute(f"UPDATE profiles SET {key} = %s WHERE id = %s;", (value, id))
         conn.commit()
         return {"Message": "Successfully updated settings."}
