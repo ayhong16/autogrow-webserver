@@ -54,9 +54,16 @@ export default function ReadingsLineChart({
     scales: {
       x: {
         type: "time" as const,
+        time: {
+          unit: "hour" as const,
+          displayFormats: {
+            hour: "MMM D, hA",
+          },
+          tooltipFormat: "MMM D YYYY, h:mm:ss A",
+        },
         ticks: {
           autoSkip: true,
-          maxTicksLimit: 6,
+          maxTicksLimit: 12,
           color: "#258239",
         },
         title: {
