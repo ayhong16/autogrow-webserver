@@ -1,14 +1,15 @@
-import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
   Title,
   Tooltip,
+  TimeScale
 } from "chart.js";
 import LightBackground from "../LightBackground";
+import 'chartjs-adapter-moment';
+import { Line } from "react-chartjs-2";
 
 interface Props {
   x: Date[];
@@ -19,12 +20,12 @@ interface Props {
 }
 
 ChartJS.register(
-  CategoryScale,
   LinearScale,
+  TimeScale,
   PointElement,
   LineElement,
   Title,
-  Tooltip
+  Tooltip,
 );
 
 export default function ReadingsLineChart({
@@ -52,6 +53,7 @@ export default function ReadingsLineChart({
     },
     scales: {
       x: {
+        type: "time" as const,
         ticks: {
           autoSkip: true,
           maxTicksLimit: 6,
