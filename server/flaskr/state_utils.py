@@ -96,7 +96,7 @@ def set_schedule_state(start, end, profile_name):
     """
     if not profile_name:
         return {f"Error": "No profile selected to update."}
-    if not start and not end:
+    if not start or not end:
         return {f"Error": "No schedule provided."}
     print("start: ", start)
     print("end: ", end)
@@ -107,11 +107,7 @@ def set_schedule_state(start, end, profile_name):
 
     # Update the start_light and end_light properties for the specified profile
     try:
-        if start:
-            cursor.execute("UPDATE profiles SET start_time = %s WHERE name = %s;", (start, profile_name))
-        if end:
-            cursor.execute("UPDATE profiles SET end_time = %s WHERE name = %s;", (end, profile_name))
-        # cursor.execute("UPDATE profiles SET start_time = %s, end_time = %s WHERE name = %s;", (start, end, profile_name))
+        cursor.execute("UPDATE profiles SET start_time = %s, end_time = %s WHERE name = %s;", (start, end, profile_name))
         conn.commit()
         return {"Message": "Successfully updated schedule."}
     except Exception as e:

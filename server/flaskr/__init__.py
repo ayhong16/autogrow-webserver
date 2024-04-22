@@ -56,13 +56,9 @@ def create_app(test_config=None):
         Returns:
             Error or success message
         """
-        start = request.json.get("start")
-        end = request.json.get("end")
-        profile_name = request.json.get("profile")
-        print("Received request to set schedule")
-        print("start: ", start)
-        print("end: ", end)
-        print("name: ", profile_name)
+        start = request.args.get("start")
+        end = request.args.get("end")
+        profile_name = request.args.get("name")
         return jsonify(set_schedule_state(start, end, profile_name))
 
     @app.route("/api", methods=["GET", "POST"])

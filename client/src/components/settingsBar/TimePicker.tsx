@@ -1,66 +1,17 @@
-import { useState, useEffect } from "react";
-
 interface Props {
-  currentValue?: string;
+  currentTime?: moment.Moment;
   label: string;
   onTimeChange: (newTime: string) => void;
 }
 
 export default function TimePicker({
-  currentValue,
+  currentTime,
   label,
   onTimeChange,
 }: Props) {
-  const [hour, setHour] = useState<string>("");
-  const [minute, setMinute] = useState<string>("");
-  const [second, setSecond] = useState<string>("");
-  const [ampm, setAmpm] = useState<string>("");
-
-  const splitTime = (time: string) => {
-    const [h, m, s] = time.split(":");
-    setHour(h);
-    setMinute(m);
-    setSecond(s);
-
-    let ampmValue;
-    let formattedHours = parseInt(h);
-    if (formattedHours >= 12) {
-      ampmValue = "PM";
-      if (formattedHours > 12) {
-        formattedHours -= 12;
-        setHour(formattedHours.toString());
-      }
-    } else {
-      ampmValue = "AM";
-      if (formattedHours === 0) {
-        formattedHours = 12;
-      }
-    }
-    setAmpm(ampmValue);
-  };
-
-  useEffect(() => {
-    if (currentValue) {
-      splitTime(currentValue);
-    }
-  }, [currentValue]);
-
-  const revertTo24Hour = (hour: string) => {
-    if (ampm === "AM") {
-      return hour === "12" ? "00" : hour;
-    } else {
-      return hour === "12" ? hour : (parseInt(hour) + 12).toString();
-    }
-  };
-
-  const handleTimeChange = () => {
-    const newHour = revertTo24Hour(hour);
-    const newMinute = minute.padStart(2, "0");
-    const newSecond = second.padStart(2, "0");
-    const newTime = `${newHour}:${newMinute}:${newSecond}`;
-    onTimeChange(newTime);
-  };
-
+  if (!currentTime) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="flex flex-row items-center text-sm m-1">
       <h1 className="text-m text-darkGreen">{label}</h1>
@@ -69,10 +20,17 @@ export default function TimePicker({
         <select
           id="hourDropdown"
           className="preline-dropdow text-darkGreen"
-          value={hour}
+          value={currentTime?.format("h")}
           onChange={(e) => {
-            setHour(() => e.target.value);
-            handleTimeChange();
+            const newHour = parseInt(e.target.value);
+            const oldHour = currentTime?.hour();
+            currentTime?.hour(newHour);
+            if (oldHour! >= 12) {
+              const updatedTime = currentTime!.clone().add(12, "hours");
+              onTimeChange(updatedTime?.format("HH:mm:ss") || "");
+            } else {
+              onTimeChange(currentTime?.format("HH:mm:ss") || "");
+            }
           }}
         >
           {[...Array(12).keys()].map((i) => (
@@ -88,10 +46,10 @@ export default function TimePicker({
         <select
           id="minuteDropdown"
           className="preline-dropdow text-darkGreen"
-          value={minute}
+          value={currentTime?.format("m")}
           onChange={(e) => {
-            setMinute(e.target.value);
-            handleTimeChange();
+            currentTime?.minute(parseInt(e.target.value));
+            onTimeChange(currentTime?.format("HH:mm:ss") || "");
           }}
         >
           {[...Array(12).keys()].map((i) => (
@@ -107,10 +65,10 @@ export default function TimePicker({
         <select
           id="secondDropdown"
           className="preline-dropdow text-darkGreen"
-          value={second}
+          value={currentTime?.format("s")}
           onChange={(e) => {
-            setSecond(e.target.value);
-            handleTimeChange();
+            currentTime?.second(parseInt(e.target.value));
+            onTimeChange(currentTime?.format("HH:mm:ss") || "");
           }}
         >
           {[...Array(6).keys()].map((i) => (
@@ -126,10 +84,23 @@ export default function TimePicker({
         <select
           id="secondDropdown"
           className="preline-dropdow text-darkGreen"
-          value={ampm}
+          value={currentTime?.format("A")}
           onChange={(e) => {
-            setAmpm(e.target.value);
-            handleTimeChange();
+            const newAmPm = e.target.value;
+            let updatedTime;
+
+            if (newAmPm === "AM") {
+              // Set the time to the same hour but in the morning (AM)
+              updatedTime = currentTime!.clone().subtract(12, "hours");
+            } else {
+              console.log("PM");
+              // Set the time to the same hour but in the afternoon (PM)
+              updatedTime = currentTime!.clone().add(12, "hours");
+              console.log(updatedTime.format("HH:mm:ss"));
+            }
+
+            // Update the time in the parent component
+            onTimeChange(updatedTime.format("HH:mm:ss"));
           }}
         >
           <option value="AM">AM</option>

@@ -2,65 +2,85 @@ import { useState, useEffect } from "react";
 import { ProfileEntry } from "../../types/Profile";
 import TimePicker from "./TimePicker";
 import axios from "axios";
+import moment from "moment";
 
 export default function SettingsBar() {
   const [currentProfile, setCurrentProfile] = useState(
     null as ProfileEntry | null
   );
-  const [startTime, setStartTime] = useState(
-    currentProfile?.start_time || "00:00:00"
-  );
-  const [endTime, setEndTime] = useState(
-    currentProfile?.end_time || "00:00:00"
-  );
+  // const [startTime, setStartTime] = useState(
+  //   currentProfile?.start_time || null
+  // );
+  // const [endTime, setEndTime] = useState(currentProfile?.end_time || null);
 
   useEffect(() => {
-    const getCurrentProfile = async () => {
-      const getData = async () => {
-        const response = await axios.get("/api/state");
-        if (response.data) {
-          setCurrentProfile(response.data as ProfileEntry);
-        }
-      };
-      getData();
+    if (currentProfile) {
+      // setStartTime(currentProfile!.start_time);
+      // setEndTime(currentProfile!.end_time);
+    }
+    console.log("currentProfile: ", currentProfile);
+  }, [currentProfile]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const response = await axios.get("/api/state");
+      if (response.data) {
+        console.log(response.data);
+        setCurrentProfile(response.data as ProfileEntry);
+      }
     };
 
-    getCurrentProfile();
-    const interval = setInterval(getCurrentProfile, 5000); // 5 second sample interval
-    return () => clearInterval(interval);
+    getData();
   }, []);
 
   const handleApplyButtonClick = () => {
-    const params: Record<string, string> = {
-      start: startTime,
-      end: endTime,
-      profile_name: currentProfile?.name || "",
+    const queryParams = {
+      start: currentProfile?.start_time,
+      end: currentProfile?.end_time,
+      name: currentProfile?.name || "",
     };
-    const postData = async (params: any) => {
-      const response = await axios.post("/api/set_schedule", params);
+    console.log("queryParams", queryParams);
+    const postData = async () => {
+      const response = await axios.post("/api/set_schedule", null, {
+        params: queryParams,
+      });
       console.log(response.data);
     };
-    postData(params);
+    postData();
   };
 
   const handleStartTimeChange = (newStartTime: string) => {
-    setStartTime(newStartTime);
+    setCurrentProfile((prev) => ({
+      ...prev!,
+      start_time: newStartTime,
+    }));
   };
 
   const handleEndTimeChange = (newEndTime: string) => {
-    setEndTime(newEndTime);
+    setCurrentProfile((prev) => ({
+      ...prev!,
+      end_time: newEndTime,
+    }));
   };
 
   return (
     <div className="flex flex-col w-fit items-center border-2 border-darkGreen m-2 rounded-xl">
       <h1 className="text-darkGreen text-2xl m-2">Grow Light Schedule</h1>
       <TimePicker
-        currentValue={currentProfile?.start_time}
+        currentTime={
+          currentProfile === null
+            ? undefined
+            : moment(currentProfile?.start_time, "HH:mm:ss")
+        }
         label="Start:"
         onTimeChange={handleStartTimeChange}
       />
       <TimePicker
-        currentValue={currentProfile?.end_time}
+        currentTime={
+          currentProfile === null
+            ? undefined
+            : moment(currentProfile?.end_time, "HH:mm:ss")
+        }
         label="End:"
         onTimeChange={handleEndTimeChange}
       />
