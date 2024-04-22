@@ -59,7 +59,7 @@ export default function ReadingsLineChart({
           displayFormats: {
             hour: "MMM D, hA",
           },
-          tooltipFormat: "MMM D, h:mm:ss A",
+          tooltipFormat: "MMM D YYYY, h:mm:ss A",
         },
         ticks: {
           autoSkip: true,
