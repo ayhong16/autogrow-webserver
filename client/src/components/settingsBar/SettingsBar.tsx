@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { ProfileEntry } from "../../types/Profile";
 import axios from "axios";
 import LightBackground from "../LightBackground";
-import SetSchedule from "./SetSchedule";
+import SetSchedule from "./schedule/SetSchedule";
+import Interval from "./interval/Interval"
 
 export default function SettingsBar() {
 	const [currentProfile, setCurrentProfile] = useState(
@@ -27,13 +28,9 @@ export default function SettingsBar() {
 			name: currentProfile?.name || "",
 		};
 		axios
-			.post(
-				"/api/set_schedule",
-				null,
-				{
-					params: queryParams,
-				}
-			)
+			.post("/api/set_schedule", null, {
+				params: queryParams,
+			})
 			.then(() => {
 				// Handle success
 				console.log("Schedule set successfully");
@@ -54,9 +51,7 @@ export default function SettingsBar() {
 					currentProfile={currentProfile}
 					setCurrentProfile={setCurrentProfile}
 				/>
-				<div>
-					<h3>TEST</h3>
-				</div>
+				<Interval />
 			</div>
 			<button
 				className="bg-darkGreen text-white text-xl px-4 py-2 rounded-xl self-end hover:scale-105 transition-transform ease-in-out duration-150"

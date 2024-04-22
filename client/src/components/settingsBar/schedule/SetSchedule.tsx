@@ -1,6 +1,6 @@
 import moment from "moment";
 import TimePicker from "./TimePicker";
-import { ProfileEntry } from "../../types/Profile";
+import { ProfileEntry } from "../../../types/Profile";
 
 interface Props {
 	currentProfile: ProfileEntry | null;
