@@ -24,3 +24,11 @@ CREATE TABLE profiles (
     ph_poll_interval INT,
     dht_poll_interval INT
 );
+
+ALTER TABLE profiles
+ADD min_ph FLOAT,
+ADD max_ph FLOAT,
+ADD min_temp FLOAT,
+ADD max_temp FLOAT,
+ADD min_humd FLOAT,
+ADD max_humd FLOAT;
