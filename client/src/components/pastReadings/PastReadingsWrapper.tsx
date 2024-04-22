@@ -26,10 +26,6 @@ export default function PastReadingsWrapper() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!data || data.length === 0) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <>
       <ReadingsLineChart

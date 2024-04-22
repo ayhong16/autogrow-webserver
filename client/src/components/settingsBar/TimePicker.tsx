@@ -9,17 +9,14 @@ export default function TimePicker({
   label,
   onTimeChange,
 }: Props) {
-  if (!currentTime) {
-    return <div>Loading...</div>;
-  }
   return (
-    <div className="flex flex-row items-center text-sm m-1">
-      <h1 className="text-m text-darkGreen">{label}</h1>
-      <div className="flex flex-col items-center m-1">
-        <h1 className="text-darkGreen">Hour</h1>
+    <div className="flex flex-row items-center text-sm gap-2">
+      <p className="text-m text-darkGreen text-xl">{label}:</p>
+      <div className="flex flex-col items-center">
+        <label htmlFor={"hourDropdown" + label} className="text-darkGreen">Hour</label>
         <select
-          id="hourDropdown"
-          className="preline-dropdow text-darkGreen"
+          id={"hourDropdown" + label}
+          className="preline-dropdow text-darkGreen bg-lightGreen"
           value={currentTime?.format("h")}
           onChange={(e) => {
             const newHour = parseInt(e.target.value);
@@ -42,10 +39,10 @@ export default function TimePicker({
       </div>
 
       <div className="flex flex-col items-center m-1">
-        <h1 className="text-darkGreen">Minute</h1>
+        <label htmlFor={"minuteDropdown" + label} className="text-darkGreen">Minute</label>
         <select
-          id="minuteDropdown"
-          className="preline-dropdow text-darkGreen"
+          id={"minuteDropdown" + label}
+          className="preline-dropdow text-darkGreen bg-lightGreen"
           value={currentTime?.format("m")}
           onChange={(e) => {
             currentTime?.minute(parseInt(e.target.value));
@@ -61,10 +58,10 @@ export default function TimePicker({
       </div>
 
       <div className="flex flex-col items-center m-1">
-        <h1 className="text-darkGreen">Second</h1>
+        <label htmlFor={"secondDropdown" + label} className="text-darkGreen">Second</label>
         <select
-          id="secondDropdown"
-          className="preline-dropdow text-darkGreen"
+          id={"secondDropdown" + label}
+          className="preline-dropdow text-darkGreen bg-lightGreen"
           value={currentTime?.format("s")}
           onChange={(e) => {
             currentTime?.second(parseInt(e.target.value));
@@ -80,10 +77,10 @@ export default function TimePicker({
       </div>
 
       <div className="flex flex-col items-center m-1">
-        <h1 className="text-darkGreen">AM/PM</h1>
+        <label htmlFor={"ampmDropdown" + label} className="text-darkGreen">AM/PM</label>
         <select
-          id="secondDropdown"
-          className="preline-dropdow text-darkGreen"
+          id={"ampmDropdown" + label}
+          className="preline-dropdow text-darkGreen bg-lightGreen"
           value={currentTime?.format("A")}
           onChange={(e) => {
             const newAmPm = e.target.value;
