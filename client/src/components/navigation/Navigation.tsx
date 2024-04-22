@@ -29,7 +29,7 @@ export default function Navigation() {
 				</option>
 			</select>
 			<div className="flex flex-row items-center justify-center">
-				<img src={"/Logo/Logo_white.png"} className="md:w-[44px] w-[32px]" />
+				<img src={"/Logo_white.png"} className="md:w-[44px] w-[32px]" />
 				<h1 className="text-white md:text-3xl font-semibold mx-4">AutoGrow</h1>
 			</div>
 		</nav>
