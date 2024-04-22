@@ -3,6 +3,14 @@ import Navigation from "./components/navigation/Navigation.tsx";
 import PastReadingsWrapper from "./components/pastReadings/PastReadingsWrapper.tsx";
 import SettingsBar from "./components/settingsBar/SettingsBar.tsx";
 
+import "preline/preline";
+import { IStaticMethods } from "preline/preline";
+declare global {
+  interface Window {
+    HSStaticMethods: IStaticMethods;
+  }
+}
+
 function App() {
   return (
     <>
