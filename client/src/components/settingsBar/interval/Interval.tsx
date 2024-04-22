@@ -1,8 +1,8 @@
-import { Props } from "../SettingsBar";
+import { Props } from "../Settings";
 
 export default function Interval({ currentProfile, setCurrentProfile }: Props) {
 	return (
-		<div className="flex flex-col items-center gap-4 text-darkGreen">
+		<div className="flex flex-col items-center justify-between text-darkGreen h-full">
 			<h3 className="text-2xl m-2">Sampling Rates</h3>
 			<div className="grid grid-cols-2 gap-y-4 gap-x-2">
 				<label htmlFor="phInterval" className="text-right">

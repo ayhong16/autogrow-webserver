@@ -1,7 +1,7 @@
 import CurrentReadingsWrapper from "./components/currentReadings/CurrentReadingsWrapper.tsx";
 import Navigation from "./components/navigation/Navigation.tsx";
 import PastReadingsWrapper from "./components/pastReadings/PastReadingsWrapper.tsx";
-import SettingsBar from "./components/settingsBar/SettingsBar.tsx";
+import SettingsBar from "./components/settingsBar/Settings.tsx";
 
 import "preline/preline";
 import { IStaticMethods } from "preline/preline";
