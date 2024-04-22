@@ -11,14 +11,9 @@ export default function SettingsBar() {
   );
 
   useEffect(() => {
-    console.log("currentProfile: ", currentProfile);
-  }, [currentProfile]);
-
-  useEffect(() => {
     const getData = async () => {
       const response = await axios.get("/api/state");
       if (response.data) {
-        console.log(response.data);
         setCurrentProfile(response.data as ProfileEntry);
       }
     };
@@ -32,12 +27,10 @@ export default function SettingsBar() {
       end: currentProfile?.end_time,
       name: currentProfile?.name || "",
     };
-    console.log("queryParams", queryParams);
     const postData = async () => {
       const response = await axios.post("/api/set_schedule", null, {
         params: queryParams,
       });
-      console.log(response.data);
     };
     postData();
   };

@@ -18,8 +18,6 @@ export default function Navigation() {
     getData();
   }, []);
 
-  console.log("currentProfile: ", currentProfile);
-
   return (
     <nav className="flex flex-row relative bg-darkGreen h-12 items-center">
       <select

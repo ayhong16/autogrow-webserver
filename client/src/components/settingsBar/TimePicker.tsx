@@ -90,10 +90,8 @@ export default function TimePicker({
               // Set the time to the same hour but in the morning (AM)
               updatedTime = currentTime!.clone().subtract(12, "hours");
             } else {
-              console.log("PM");
               // Set the time to the same hour but in the afternoon (PM)
               updatedTime = currentTime!.clone().add(12, "hours");
-              console.log(updatedTime.format("HH:mm:ss"));
             }
 
             // Update the time in the parent component
