@@ -7,7 +7,7 @@ export default function Thresholds({
 	return (
 		<div className="flex flex-col items-center justify-between text-darkGreen h-full">
 			<h3 className="text-2xl m-2">Thresholds</h3>
-			<div className="grid grid-cols-3 gap-y-4 items-center justify-items-center">
+			<div className="grid grid-cols-1 lg:grid-cols-3 gap-y-4 items-center justify-items-center">
 				<div className="flex flex-row gap-2 justify-between">
 					<label htmlFor="phMin" className="text-right">
 						pH Minimum

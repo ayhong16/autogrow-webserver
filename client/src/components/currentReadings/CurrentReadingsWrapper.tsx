@@ -30,7 +30,7 @@ export default function CurrentReadingsWrapper() {
 				<h2 className="text-4xl font-medium text-center text-darkGreen">
 					Current Readings
 				</h2>
-				<div className="flex md:flex-row flex-col items-center w-full justify-evenly">
+				<div className="flex lg:flex-row flex-col items-center w-full justify-evenly">
 					<CurrentReading
 						min={state?.min_temp}
 						max={state?.max_temp}

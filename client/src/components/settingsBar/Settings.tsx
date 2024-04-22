@@ -36,7 +36,6 @@ export default function SettingsBar() {
 			const response = await axios.get("/api/state");
 			if (response.data) {
 				setCurrentProfile(response.data as ProfileEntry);
-				console.log("Data fetched", response.data);
 			}
 		};
 
@@ -57,7 +56,6 @@ export default function SettingsBar() {
 			min_humd: currentProfile?.min_humd ?? 0,
 			max_humd: currentProfile?.max_humd ?? 100,
 		};
-		console.log("Query params:", queryParams);
 		axios
 			.post("/api/update_settings", null, {
 				params: queryParams,
@@ -71,7 +69,7 @@ export default function SettingsBar() {
 	};
 
 	const verticalLine = (
-		<div className="w-[0.2rem] h-[156px] rounded-full bg-darkGreen"></div>
+		<div className="lg:w-[0.2rem] lg:h-[156px] rounded-full bg-darkGreen"></div>
 	);
 
 	return (
@@ -79,7 +77,7 @@ export default function SettingsBar() {
 			<h2 className="text-4xl font-medium text-center text-darkGreen">
 				Settings
 			</h2>
-			<div className="flex flex-row w-full items-center justify-center gap-5 my-3">
+			<div className="flex lg:flex-row flex-col w-full items-center justify-center gap-5 my-3">
 				<SchedulePicker
 					currentProfile={currentProfile}
 					setCurrentProfile={setCurrentProfile}

@@ -32,7 +32,6 @@ export default function CurrentReading({
 	min,
 	max,
 }: Props) {
-	console.log(label, value, unit, min, max);
 	return (
 		<div className="flex flex-col items-center gap-2 w-fit text-4xl">
 			<h3 className="text-darkGreen">{label}</h3>
