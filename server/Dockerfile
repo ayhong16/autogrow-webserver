@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y libpq-dev build-essential \
     && pip install --no-cache-dir -r requirements.txt
 # RUN pip install --no-cache-dir -r requirements.txt
 
+ENV TZ=America/New_York
+
 # Copy the rest of the application code to the container
 COPY . .
 
