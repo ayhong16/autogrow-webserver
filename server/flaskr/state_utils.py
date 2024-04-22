@@ -92,6 +92,12 @@ def get_state():
         "light_state": light_state,
         "ph_poll_interval": state["ph_poll_interval"],
         "dht_poll_interval": state["dht_poll_interval"],
+        "min_ph": state["min_ph"],
+        "max_ph": state["max_ph"],
+        "min_temp": state["min_temp"],
+        "max_temp": state["max_temp"],
+        "min_humd": state["min_humd"],
+        "max_humd": state["max_humd"]
     }
 
 
