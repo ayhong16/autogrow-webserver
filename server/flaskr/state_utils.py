@@ -29,7 +29,8 @@ def _interpret_light_state(state):
     return False
 
 
-def _insert_state(name, start_time, end_time, ph_poll_interval, dht_poll_interval):
+def _insert_state(name, start_time, end_time, ph_poll_interval, dht_poll_interval, 
+                  min_ph, max_ph, min_temp, max_temp, min_humd, max_humd):
     """Inserts a new profile into the database.
 
     Args:
@@ -46,8 +47,10 @@ def _insert_state(name, start_time, end_time, ph_poll_interval, dht_poll_interva
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO profiles (name, start_time, end_time, ph_poll_interval, dht_poll_interval) VALUES (%s, %s, %s, %s, %s)",
-            (name, start_time, end_time, ph_poll_interval, dht_poll_interval),
+            "INSERT INTO profiles (name, start_time, end_time, ph_poll_interval, dht_poll_interval, "
+            "min_ph, max_ph, min_temp, max_temp, min_humd, max_humd) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (name, start_time, end_time, ph_poll_interval, dht_poll_interval, 
+             min_ph, max_ph, min_temp, max_temp, min_humd, max_humd),
         )
         conn.commit()
         cursor.close()
@@ -55,66 +58,6 @@ def _insert_state(name, start_time, end_time, ph_poll_interval, dht_poll_interva
         return {"Message": "Successfully posted profile."}
     except Exception as e:
         return {f"Error {e}": "Could not post profile."}
-
-
-def get_schedule(profile):
-    """Returns the current grow light schedule for a specified profile.
-
-    Returns:
-        dict: description of the start and end times for the grow light or error dict
-    """
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute(f"SELECT * FROM profiles WHERE name = '{profile}';")
-
-        col_names = [desc[0] for desc in cursor.description]
-        state = None
-        for row in cursor.fetchall():
-            data_entry = dict(zip(col_names, row))
-            state = data_entry
-        return {
-            "start_time": str(state["start_time"]),
-            "end_time": str(state["end_time"]),
-        }
-    except Exception as e:
-        return {f"Error {str(e)}": "Unable to fetch schedule."}
-    finally:
-        cursor.close()
-        conn.close()
-
-
-def set_schedule_state(start, end, profile_name):
-    """Updates the start and end times for the grow light for a specified profile.
-
-    Args:
-        data: JSON object with information on profile_name, start_time, and end_time.
-
-    Returns:
-        dict: message of success or error
-    """
-    if not profile_name:
-        return {f"Error": "No profile selected to update."}
-    if not start or not end:
-        return {f"Error": "No schedule provided."}
-    print("start: ", start)
-    print("end: ", end)
-    print("name: ", profile_name)
-    
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    # Update the start_light and end_light properties for the specified profile
-    try:
-        cursor.execute("UPDATE profiles SET start_time = %s, end_time = %s WHERE name = %s;", (start, end, profile_name))
-        conn.commit()
-        return {"Message": "Successfully updated schedule."}
-    except Exception as e:
-        return {f"Error {str(e)}": "Unable to update schedule."}
-    finally:
-        cursor.close()
-        conn.close()
 
 
 def get_state():
@@ -142,6 +85,7 @@ def get_state():
 
     light_state = _interpret_light_state(state)
     return {
+        "id": state["id"],
         "name": state["name"],
         "start_time": state["start_time"].strftime("%H:%M:%S"),
         "end_time": state["end_time"].strftime("%H:%M:%S"),
@@ -166,7 +110,50 @@ def post_state(state):
     end_light = state.get("end_time")
     ph_poll_interval = state.get("ph_poll_interval")
     dht_poll_interval = state.get("dht_poll_interval")
-    print(name, start_light, end_light, ph_poll_interval, dht_poll_interval)
+    min_ph = state.get("min_ph")
+    max_ph = state.get("max_ph")
+    min_temp = state.get("min_temp")
+    max_temp = state.get("max_temp")
+    min_humd = state.get("min_humd")
+    max_humd = state.get("max_humd")
     return _insert_state(
-        name, start_light, end_light, ph_poll_interval, dht_poll_interval
+        name, start_light, end_light, ph_poll_interval, dht_poll_interval, 
+        min_ph, max_ph, min_temp, max_temp, min_humd, max_humd
     )
+    
+def change_settings(id, start_time, end_time, dht_poll_interval, ph_poll_interval,
+                     min_ph, max_ph, min_temp, max_temp, min_humd, max_humd):
+    """Updates the ideal ranges for pH, temperature, and humidity for a specified profile."""
+    if not id:
+        return {f"Error": "No profile selected to update."}
+    if (not start_time and not end_time and not dht_poll_interval and not ph_poll_interval and not min_ph 
+        and not max_ph and not min_temp and not max_temp and not min_humd and not max_humd):
+        return {f"Error": "No values provided to update."}
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Update the start_light and end_light properties for the specified profile
+    try:
+        var_map = {
+            "min_ph": min_ph,
+            "max_ph": max_ph,
+            "min_temp": min_temp,
+            "max_temp": max_temp,
+            "min_humd": min_humd,
+            "max_humd": max_humd,
+            "start_time": start_time,
+            "end_time": end_time,
+            "dht_poll_interval": dht_poll_interval,
+            "ph_poll_interval": ph_poll_interval
+        }
+        for key, value in var_map.items():
+            if value:
+                cursor.execute(f"UPDATE profiles SET {key} = %s WHERE id = %s;", (value, id))
+        conn.commit()
+        return {"Message": "Successfully updated settings."}
+    except Exception as e:
+        return {f"Error {str(e)}": "Unable to update ideal ranges."}
+    finally:
+        cursor.close()
+        conn.close()
