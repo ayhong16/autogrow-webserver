@@ -1,3 +1,4 @@
+
 import { Props } from "../Settings";
 
 export default function Interval({ currentProfile, setCurrentProfile }: Props) {
