@@ -19,31 +19,31 @@ export default function CurrentReadingsWrapper() {
   }, []);
 
   return (
-    <LightBackground>
-      <div className="flex flex-col items-center gap-8 w-full">
-        <h2 className="text-4xl font-medium text-center text-darkGreen">
-          Current Readings
-        </h2>
-        <div className="flex md:flex-row flex-col items-center w-full justify-evenly">
-          <CurrentReading
-            value={currentReading?.temp}
-            label="Temperature"
-            unit="°F"
-          />
-          <CurrentReading
-            value={currentReading?.humd}
-            label="Humidity"
-            unit="%"
-          />
-          <CurrentReading value={currentReading?.ph} label="pH" />
-          <CurrentReading
-            value={
-              currentReading ? (currentReading.light ? "On" : "Off") : undefined
-            }
-            label="Light Status"
-          />
-        </div>
-      </div>
-    </LightBackground>
-  );
+		<LightBackground>
+			<div className="flex flex-col items-center gap-8 w-full">
+				<h2 className="text-4xl font-medium text-center text-darkGreen">
+					Current Readings
+				</h2>
+				<div className="flex md:flex-row flex-col items-center w-full justify-evenly">
+					<CurrentReading
+						value={currentReading?.temp}
+						label="Temperature"
+						unit="°C"
+					/>
+					<CurrentReading
+						value={currentReading?.humd}
+						label="Humidity"
+						unit="%"
+					/>
+					<CurrentReading value={currentReading?.ph} label="pH" />
+					<CurrentReading
+						value={
+							currentReading ? (currentReading.light ? "On" : "Off") : undefined
+						}
+						label="Light Status"
+					/>
+				</div>
+			</div>
+		</LightBackground>
+	);
 }
